@@ -8,8 +8,9 @@
                 <table class='table table-hover table-striped'>
                  <thead>
                         <th scope="col">ID</th>
-                     <th scope="col">Name</th>
-                     <th scope="col">QTY</th>
+                     <th scope="col">Date Created</th>   
+                     <th scope="col">Customer Name</th>
+                     <th scope="col">Customer Complaint</th>
                      <th scope="col">Category</th>
                      <th scope="col"></th>
                      <th scope="col"></th>
@@ -29,8 +30,9 @@
                      {% for item in items %}
                      <tr> 
                             <th scope='row'> {{ item.id }}</th>
+                            {#<td>{{  item.date_created  }}</td>#}
                             <td>{{ item.name }} </td>
-                            <td>{{ item.quantity }} </td>
+                            <td>{{ item.complaint }} </td>
                             <td> {{ item.category.name }}</td>
                             <td><a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a></td>
                             <td><a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a></td>

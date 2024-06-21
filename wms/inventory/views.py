@@ -4,7 +4,7 @@ from django.views.generic import TemplateView, View, CreateView, UpdateView, Del
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import  LoginRequiredMixin
 from .forms import UserRegisterForm, InventoryItemForm
-from .models import InventoryItem, Category
+from .models import InventoryItem, Category 
 
 class Index(TemplateView):
     template_name = 'inventory/index.html'
