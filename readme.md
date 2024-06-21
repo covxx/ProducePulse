@@ -4,9 +4,10 @@ Bulit with django
 
 Simple and easy complaint tracking web app to stay informed
 ___________________
-Planned features
 Verison 0.10
 Current bulid 6/21/24
+
+Planned features
 ___________________
 - [ ] Dashboard view with data from logged complaints
 - [ ] Status tagging system
