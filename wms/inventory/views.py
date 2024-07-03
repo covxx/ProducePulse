@@ -4,7 +4,7 @@ from django.views.generic import TemplateView, View, CreateView, UpdateView, Del
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import  LoginRequiredMixin
 from .forms import UserRegisterForm, InventoryItemForm
-from .models import InventoryItem, Category
+from .models import InventoryItem, Category, ItemImages
 
 
 class Index(TemplateView):
@@ -17,7 +17,14 @@ class Dashboard(LoginRequiredMixin, View):
     
 def item_detail_view(request, item_id):
     item = get_object_or_404(InventoryItem, id=item_id)
-    return render(request, 'inventory/item_detail.html', {'item': item})
+    if request.method == 'POST':
+        form = InventoryItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect('detail-item', item_id=item.id)
+    else:
+        form = InventoryItemForm(instance=item)
+    return render(request, 'inventory/item_detail.html', {'item': item, 'form': form})
 class SignUpView(View):
     def get(self, request):
         form = UserRegisterForm()

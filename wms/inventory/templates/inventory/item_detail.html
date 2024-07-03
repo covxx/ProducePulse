@@ -4,46 +4,31 @@
         <div class="col-md-8 col-12 mx-auto mt-5">
             <h1>Item Details</h1>
             <table class="table table-bordered">
-                <tr>
-                    <th>ID</th>
-                    <td>{{ item.id }}</td>
-                </tr>
-                <tr>
-                    <th>Customer Name</th>
-                    <td>{{ item.name }}</td>
-                </tr>
-                <tr>
-                    <th>Complaint Details</th>
-                    <td>{{ item.complaint }}</td>
-                </tr>
-                <tr>
-                    <th>Date Complained</th>
-                    <td>{{ item.date_complained }}</td>
-                </tr>
-                <tr>
-                    <th>Category</th>
-                    <td>{{ item.category.name }}</td>
-                </tr>
-                <tr>
-                    <th>Date Created</th>
-                    <td>{{ item.date_created }}</td>
-                </tr>
-                <tr>
-                    <th>Order Built Date</th>
-                    <td>{{ item.date_built }}</td>
-                </tr>
-                <tr>
-                    <th>Built By</th>
-                    <td>{{ item.built_by }}</td>
-                </tr>
-                <tr>
-                    <th>User</th>
-                    <td>{{ item.user.username }}</td>
-                </tr>
+                <!-- Display item details -->
+                <!-- ... Your existing item details ... -->
+
             </table>
+
+            <!-- Display uploaded images -->
+            <h2>Uploaded Images</h2>
+            <div class="row">
+                {% for image in item.images.all %}
+                    <div class="col-md-4 mb-4">
+                        <img src="{{ image.image.url }}" class="img-fluid" alt="Item Image">
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Form for uploading more images -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Upload Images</button>
+            </form>
+
             <a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a>
             <a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a>
-            <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to List</a>
+            <a href="{% url 'items-list' %}" class="btn btn-primary">Back to List</a>
         </div>
     </div>
 {% endblock %}
