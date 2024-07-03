@@ -10,24 +10,22 @@
                         <div class="alert alert-danger">
                             <strong> {{ error|escape }} </strong>
                         </div> 
-                   {% endfor %}
+                    {% endfor %}
                 {% endfor %}   
                 {% for error in form.non_field_errors %}
-                <div class="alert alert-danger">
-                    <strong> {{ error|escape }} </strong>
-                </div>
+                    <div class="alert alert-danger">
+                        <strong> {{ error|escape }} </strong>
+                    </div>
                 {% endfor %}
-                {% endif %}
-
-                <form method='post'>
-                    {% csrf_token %}
-                    {{ form|crispy }}
-
-                    <button class="btn btn-primary" type="submit">Sign Up</button>
-                </form>
-                <div class="pt-3">
-                    <small class="text-muted">Already have an account? <a href="{% url 'login' %}" class='ml-2'>Sign In </a> </small>
-                    </div>        
-            </div>                             
+            {% endif %}
+            <form method='post'>
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button class="btn btn-primary" type="submit">Sign Up</button>
+            </form>
+            <div class="pt-3">
+                <small class="text-muted">Already have an account? <a href="{% url 'login' %}" class='ml-2'>Sign In </a></small>
+            </div>        
+        </div>                             
     </div>   
 {% endblock content %}

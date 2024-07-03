@@ -5,7 +5,6 @@ class InventoryItem(models.Model):
     name = models.CharField(default="Enter Customer Name...",max_length=200)
     complaint = models.TextField(max_length=2000,default="Enter Complaint...")
     date_complained = models.CharField(max_length=10,default="MM/DD/YYYY")
-    #lot = models.IntegerField( )
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, blank=True, null=True)
     date_created = models.DateField(auto_now_add=True)
     date_built = models.CharField(max_length=10,default="MM/DD/YYYY")
