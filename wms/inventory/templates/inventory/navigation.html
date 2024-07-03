@@ -12,9 +12,6 @@
             </li>
             <li class"nav-item">
                 <a class="nav-link" href="{% url 'logout' %}">Sign Out </a>
-           {# <li class="nav-item"> #}
-            {#    <a class="nav-link" href="#">Sign In</a> #}
-           {#} </li> #}
             {% else %}
             <a class="nav-link" href="{% url 'login' %}">Log In </a>
             <a class="nav-link" href="{% url 'signup' %}">Sign Up </a>
