@@ -1,7 +1,16 @@
 {% extends 'inventory/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary my-3 mx-4">Go Back</a>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var currentPath = window.location.pathname;
+        //console.log("Current Path:", currentPath); // Debugging line to ensure the script is running and to see the current path
+        var editItemPattern = /^\/edit-item\/\d+\/?$/; // Regular expression to match /edit-item/ followed by a number
+        if (editItemPattern.test(currentPath)) {
+            document.getElementById('complaintButton').textContent = 'Edit Complaint';
+        }
+    });
+</script>
         <div class='row'>
             <div class="coll-11 col-md-4 mx-auto -mt-5">
                 <h1>Customer Complaint</h1>
@@ -9,7 +18,8 @@
                     {% csrf_token %}
                     {{ form|crispy }}
                     <div class="mt-3">
-                        <button class="btn btn-primary">Add Complaint</button> 
+                        <button id="complaintButton" class="btn btn-primary">Add Complaint</button> 
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary my-3 mx-4">Go Back</a>
                     </div>
                 </form>
             </div>

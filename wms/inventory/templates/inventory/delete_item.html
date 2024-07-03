@@ -5,9 +5,10 @@
         <div class"row">
             <form method='POST' class="col-sm-11 cold-md-4 mx-auto mt-5"> 
             {% csrf_token %}
-            <h1 class="fw-light">Are you sure you want to delete? {{ item.name }}?</h1>
+            <h1 class="fw-light">Are you sure you want to delete? {{ item.id }}?</h1>
             <p class="fw-light">This cannot be undone</p>
             <div> <button class="btn btn-danager">Delete</button>
+            <div> <button class="btn btn-outline-primary">Cancel</button>
             </div>
             </form>
         </div>
