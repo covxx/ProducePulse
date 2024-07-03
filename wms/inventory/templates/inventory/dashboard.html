@@ -1,50 +1,65 @@
 {% extends 'inventory/base.html' %}
 {% block content %}
-{# {% block title %}Complaint Log{% endblock %} #}
     <div class="row">
         <div class="col-md-10 col-12 mx-auto mt-5">
             <div class="d-flex justify-content-end">
-                <a href="{% url 'add-item' %}" class="btn btn-primary"> </a>
-                </div>
-                <table class='table table-hover table-striped'>
-                 <thead>
-                        <th scope="col">ID</th>
-                     <th scope="col">Date Created</th>   
-                     <th scope="col">Customer Name</th>
-                     <th scope="col"> Complaint Details</th>
-                     <th scope="col">Built By</th>
-                     <th scope="col">Order Built Date</th>
-                     <th scope="col">Category</th>
-                    </thead>
-                    <tbody>
-                     {% if items|length == 0 %}
-                     <tr>
+                <a href="{% url 'add-item' %}" class="btn btn-primary">Add Item</a>
+            </div>
+            <table class='table table-hover table-striped'>
+                <thead>
+                    <th scope="col">ID</th>
+                    <th scope="col">Date Created</th>   
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Complaint Details</th>
+                    <th scope="col">Built By</th>
+                    <th scope="col">Order Built Date</th>
+                    <th scope="col">Category</th>
+                </thead>
+                <tbody>
+                    {% if items|length == 0 %}
+                        <tr>
                             <th scope="row">-</th>
                             <td>-</td> 
                             <td>-</td>
                             <td>-</td>
                             <td>-</td>
-                            <td></td>
-                            <td></td>
-                     </tr>
-                     {% endif %}
-                     {% for item in items %}
-                     <tr> 
-                            <th scope='row'> {{ item.id }}</th>
-                            <td>{{ item.date_created }}</td>
-                            <td>{{ item.name }} </td> {# Customer name field #}
-                            <td>{{ item.complaint }} </td>
-                            <td> {{  item.built_by }} </td>
-                            <td> {{ item.date_built }} </td>
-                            <td> {{ item.category.name }}</td>
-                            <td><a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a></td>
-                            <td><a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a></td>
-                            <td></td>
-                            <td></td>
-                     </tr>
-                     {% endfor %}
-                 </tbody>
-             </table>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                    {% endif %}
+                    {% for item in items %}
+                        <tr>
+                            <th scope='row'>
+                                <a href="{% url 'detail-item' item.id %}">{{ item.id }}</a>
+                            </th>
+                            <td>
+                                <a href="{% url 'detail-item' item.id %}">{{ item.date_created }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'detail-item' item.id %}">{{ item.name }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'detail-item' item.id %}">{{ item.complaint }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'detail-item' item.id %}">{{ item.built_by }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'detail-item' item.id %}">{{ item.date_built }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'detail-item' item.id %}">{{ item.category.name }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock content %}

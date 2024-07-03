@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import  LoginRequiredMixin
 from .forms import UserRegisterForm, InventoryItemForm
-from .models import InventoryItem, Category 
+from .models import InventoryItem, Category
+
 
 class Index(TemplateView):
     template_name = 'inventory/index.html'
@@ -14,6 +15,9 @@ class Dashboard(LoginRequiredMixin, View):
         items = InventoryItem.objects.filter(user=self.request.user.id).order_by('id')
         return render(request, 'inventory/dashboard.html', {'items': items})
     
+def item_detail_view(request, item_id):
+    item = get_object_or_404(InventoryItem, id=item_id)
+    return render(request, 'inventory/item_detail.html', {'item': item})
 class SignUpView(View):
     def get(self, request):
         form = UserRegisterForm()

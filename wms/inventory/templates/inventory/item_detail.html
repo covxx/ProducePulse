@@ -1,0 +1,49 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 col-12 mx-auto mt-5">
+            <h1>Item Details</h1>
+            <table class="table table-bordered">
+                <tr>
+                    <th>ID</th>
+                    <td>{{ item.id }}</td>
+                </tr>
+                <tr>
+                    <th>Customer Name</th>
+                    <td>{{ item.name }}</td>
+                </tr>
+                <tr>
+                    <th>Complaint Details</th>
+                    <td>{{ item.complaint }}</td>
+                </tr>
+                <tr>
+                    <th>Date Complained</th>
+                    <td>{{ item.date_complained }}</td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td>{{ item.category.name }}</td>
+                </tr>
+                <tr>
+                    <th>Date Created</th>
+                    <td>{{ item.date_created }}</td>
+                </tr>
+                <tr>
+                    <th>Order Built Date</th>
+                    <td>{{ item.date_built }}</td>
+                </tr>
+                <tr>
+                    <th>Built By</th>
+                    <td>{{ item.built_by }}</td>
+                </tr>
+                <tr>
+                    <th>User</th>
+                    <td>{{ item.user.username }}</td>
+                </tr>
+            </table>
+            <a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a>
+            <a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a>
+            <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to List</a>
+        </div>
+    </div>
+{% endblock %}
