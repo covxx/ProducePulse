@@ -10,10 +10,10 @@
                         <th scope="col">ID</th>
                      <th scope="col">Date Created</th>   
                      <th scope="col">Customer Name</th>
-                     <th scope="col">Customer Complaint</th>
+                     <th scope="col"> Complaint Details</th>
+                     <th scope="col">Built By</th>
+                     <th scope="col">Order Built Date</th>
                      <th scope="col">Category</th>
-                     <th scope="col"></th>
-                     <th scope="col"></th>
                     </thead>
                     <tbody>
                      {% if items|length == 0 %}
@@ -30,9 +30,11 @@
                      {% for item in items %}
                      <tr> 
                             <th scope='row'> {{ item.id }}</th>
-                            {#<td>{{  item.date_created  }}</td>#}
-                            <td>{{ item.name }} </td>
+                            <td>{{ item.date_created }}</td>
+                            <td>{{ item.name }} </td> {# Customer name field #}
                             <td>{{ item.complaint }} </td>
+                            <td> {{  item.built_by }} </td>
+                            <td> {{ item.date_built }} </td>
                             <td> {{ item.category.name }}</td>
                             <td><a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a></td>
                             <td><a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a></td>

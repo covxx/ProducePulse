@@ -13,4 +13,4 @@ class InventoryItemForm(forms.ModelForm):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), initial=0) 
     class Meta:
         model = InventoryItem
-        fields = ['name', 'complaint', 'category', 'date_complained', 'built_by', 'date_built']    
+        fields = ['name', 'complaint', 'date_complained','built_by', 'date_built', 'category']    
