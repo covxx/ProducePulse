@@ -23,14 +23,14 @@
                     </div>
                 {% endfor %}
             </div>
-
+            {% comment %}
             <!-- Form for uploading more images -->
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Upload Images</button>
             </form>
-
+            {%  endcomment %}
             <a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a>
             <a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a>
             <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to List</a>
