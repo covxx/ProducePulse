@@ -1,0 +1,37 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Reports</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="card-title">Complaints by Category (Bar Chart)</h2>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="data:image/png;base64,{{ bar_chart }}" class="img-fluid" alt="Complaints by Category (Bar Chart)">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="card-title">Complaints by Category (Pie Chart)</h2>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="data:image/png;base64,{{ pie_chart }}" class="img-fluid" alt="Complaints by Category (Pie Chart)">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12 text-center">
+                <a href="{% url 'export_csv' %}" class="btn btn-primary btn-lg mx-2">Export as CSV</a>
+                <a href="{% url 'export_excel' %}" class="btn btn-secondary btn-lg mx-2">Export as Excel</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
