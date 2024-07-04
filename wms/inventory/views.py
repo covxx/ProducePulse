@@ -30,7 +30,7 @@ class Index(TemplateView):
 
 class Dashboard(LoginRequiredMixin, View):
     def get(self, request):
-        items = InventoryItem.objects.filter(user=self.request.user.id).order_by('id')
+        items = InventoryItem.objects.all().order_by('id')  # Remove user filter
         return render(request, 'inventory/dashboard.html', {'items': items})
 
 def item_detail(request, pk):
