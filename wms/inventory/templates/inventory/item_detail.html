@@ -17,20 +17,27 @@
             <!-- Display uploaded images -->
             <h2>Uploaded Images</h2>
             <div class="row">
-                {% for image in item.images.all %}
+                {% for image in images %}
                     <div class="col-md-4 mb-4">
                         <img src="{{ image.image.url }}" class="img-fluid" alt="Item Image">
                     </div>
                 {% endfor %}
             </div>
-            {% comment %}
+
             <!-- Form for uploading more images -->
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.as_p }}
+                {{ images_form.images }}
                 <button type="submit" class="btn btn-primary">Upload Images</button>
             </form>
-            {%  endcomment %}
+
+            <!-- Form for updating item details -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ item_form.as_p }}
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+
             <a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a>
             <a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a>
             <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to List</a>

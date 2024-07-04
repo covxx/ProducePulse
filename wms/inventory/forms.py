@@ -15,21 +15,20 @@ class UserRegisterForm(UserCreationForm):
         fields = ['username', 'email', 'password1', 'password2']
 
 class MultipleFileInput(forms.ClearableFileInput):
-    def __init__(self, attrs=None):
-        super().__init__(attrs=attrs)
-
     def render(self, name, value, attrs=None, renderer=None):
         if value is None:
             value = []
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
-        output = []
-        for v in value:
-            output.append('<li>%s</li>' % forms.FileInput().get_bound_field(name, value)[0])
-        return mark_safe('<input%s multiple>' % format_html(flatatt(final_attrs)))
+        return format_html('<input{} multiple>', flatatt(final_attrs))
 
 class InventoryItemForm(forms.ModelForm):
-    images = forms.FileField(widget=MultipleFileInput(attrs={'accept': 'image/*'}), required=False)
-
     class Meta:
         model = InventoryItem
         fields = ['name', 'complaint', 'date_complained', 'category', 'date_built', 'built_by']
+
+class ItemImagesForm(forms.ModelForm):
+    images = forms.FileField(widget=MultipleFileInput(attrs={'accept': 'image/*'}), required=False)
+
+    class Meta:
+        model = ItemImages
+        fields = ['images']
