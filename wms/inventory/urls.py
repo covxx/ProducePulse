@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from .views import Index, SignUpView, Dashboard, AddItem, EditItem, DeleteItem, item_detail
+from .views import Index, SignUpView, Dashboard, add_item, EditItem, DeleteItem, item_detail
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
@@ -9,7 +9,7 @@ from django.conf import settings
 urlpatterns = [
     path('', Index.as_view(), name='index'),
     path('dashboard/', Dashboard.as_view(), name="dashboard"),
-    path('add-item/', AddItem.as_view(), name="add-item"),
+    path('add-item/', views.add_item, name="add-item"),  # Update here
     path('edit-item/<int:pk>', EditItem.as_view(), name='edit-item'),
     path('delete-item/<int:pk>', DeleteItem.as_view(), name='delete-item'),
     path('signup/', SignUpView.as_view(), name="signup"),

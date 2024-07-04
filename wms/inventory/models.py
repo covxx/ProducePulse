@@ -1,5 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+from datetime import datetime
+import os
+
+def upload_to(instance, filename):
+    base, ext = os.path.splitext(filename)
+    new_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}{ext}"
+    return os.path.join('item_images', new_filename)
 
 class InventoryItem(models.Model):
     name = models.CharField(default="Enter Customer Name...", max_length=200)
@@ -20,5 +28,4 @@ class Category(models.Model):
         return self.name
 class ItemImages(models.Model):
     item = models.ForeignKey(InventoryItem, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='static/item_images/')
-   
+    image = models.ImageField(upload_to=upload_to)
