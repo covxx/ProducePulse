@@ -5,8 +5,13 @@
             <h1>Item Details</h1>
             <table class="table table-bordered">
                 <!-- Display item details -->
-                <!-- ... Your existing item details ... -->
-
+                <tr><th>ID</th><td>{{ item.id }}</td></tr>
+                <tr><th>Name</th><td>{{ item.name }}</td></tr>
+                <tr><th>Complaint</th><td>{{ item.complaint }}</td></tr>
+                <tr><th>Date Complained</th><td>{{ item.date_complained }}</td></tr>
+                <tr><th>Category</th><td>{{ item.category }}</td></tr>
+                <tr><th>Date Built</th><td>{{ item.date_built }}</td></tr>
+                <tr><th>Built By</th><td>{{ item.built_by }}</td></tr>
             </table>
 
             <!-- Display uploaded images -->
@@ -28,7 +33,7 @@
 
             <a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a>
             <a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a>
-            <a href="{% url 'items-list' %}" class="btn btn-primary">Back to List</a>
+            <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to List</a>
         </div>
     </div>
 {% endblock %}

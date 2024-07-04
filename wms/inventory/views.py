@@ -15,16 +15,18 @@ class Dashboard(LoginRequiredMixin, View):
         items = InventoryItem.objects.filter(user=self.request.user.id).order_by('id')
         return render(request, 'inventory/dashboard.html', {'items': items})
     
-def item_detail_view(request, item_id):
-    item = get_object_or_404(InventoryItem, id=item_id)
+def item_detail(request, pk):
+    item = get_object_or_404(InventoryItem, pk=pk)
     if request.method == 'POST':
-        form = InventoryItemForm(request.POST, request.FILES, instance=item)
+        form = InventoryItemForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('detail-item', item_id=item.id)
+            images = request.FILES.getlist('images')
+            for image in images:
+                ItemImages.objects.create(item=item, image=image)
+            return redirect('detail-item', pk=item.pk)  # Ensure this matches the URL name
     else:
         form = InventoryItemForm(instance=item)
-    return render(request, 'inventory/item_detail.html', {'item': item, 'form': form})
+    return render(request, 'inventory/item_detail.html', {'form': form, 'item': item})
 class SignUpView(View):
     def get(self, request):
         form = UserRegisterForm()
