@@ -22,6 +22,8 @@ import base64
 from django.db.models import Q
 from xhtml2pdf import pisa
 from django.template.loader import render_to_string
+from django.core.paginator import Paginator
+from datetime import datetime
 
 
 # Get an instance of a logger
@@ -188,7 +190,7 @@ class DeleteItem(LoginRequiredMixin, DeleteView):
         response = super().delete(request, *args, **kwargs)
         logger.info('Item deleted with ID: %s', self.object.id)
         return response
-
+    
 def generate_report(request):
     if request.method == 'POST':
         form = ReportForm(request.POST)
@@ -206,13 +208,32 @@ def generate_report(request):
             if category:
                 items = items.filter(category=category)
 
-            # Render the PDF template
-            html_string = render_to_string('report_template.html', {'items': items})
-            pdf = pisa.CreatePDF(html_string)
+            # Pagination
+            paginator = Paginator(items, 10)  # Show 10 items per page
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
 
-            response = HttpResponse(pdf.dest.getvalue(), content_type='application/pdf')
+            # Render the PDF template
+            html_string = render_to_string('inventory/report_template.html', {
+                'items': page_obj,
+                'start_date': start_date,
+                'end_date': end_date,
+                'built_by': built_by,
+                'category': category,
+                'report_generated_on': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'user': request.user  # Pass the user information
+            })
+            response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+
+            # Create PDF
+            pisa_status = pisa.CreatePDF(
+                html_string, dest=response
+            )
+            if pisa_status.err:
+                return HttpResponse('We had some errors with code %s' % pisa_status.err)
             return response
     else:
         form = ReportForm()
-    return render(request, 'report_form.html', {'form': form})
+
+    return render(request, 'inventory/report_form.html', {'form': form})

@@ -110,7 +110,6 @@ class SearchForm(forms.Form):
             'placeholder': 'Search complaints or items...'
         })
     )
-    
 class ReportForm(forms.Form):
     start_date = forms.DateField(
         widget=forms.TextInput(attrs={'class': 'form-control datepicker'}),
