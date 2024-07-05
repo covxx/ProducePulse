@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="96x96" href="{% static 'images/favicon-96x96.png' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
     <title>ProducePulse</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +27,8 @@
             $('.datepicker').datepicker({
                 format: 'yyyy-mm-dd',
                 autoclose: true,
-                todayHighlight: true
+                todayHighlight: true,
+                endDate: new Date()  // Ensures no future dates can be selected
             });
 
             document.getElementById('uploadButton').addEventListener('click', function() {
@@ -40,6 +42,15 @@
                 } else {
                     document.getElementById('fileSelectedMessage').style.display = 'none';
                     document.getElementById('uploadButton').innerText = 'Upload Images';
+                }
+            });
+
+            const costInput = document.getElementById('id_cost');
+            costInput.addEventListener('input', function() {
+                let value = costInput.value.replace(/[^0-9.]/g, ''); // Remove non-numeric characters except period
+                let floatValue = parseFloat(value);
+                if (!isNaN(floatValue)) {
+                    costInput.value = '$' + floatValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
                 }
             });
         });

@@ -1,3 +1,5 @@
+<!-- inventory/item_form.html -->
+
 {% extends 'inventory/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
@@ -8,13 +10,13 @@
             {% csrf_token %}
             {{ form|crispy }}
             <div class="form-group">
-              <!--  <label for="id_images">Upload Images</label>
+            <!--    <label for="id_images">Upload Images</label>
                 {{ form.images }}-->
-                <small id="fileSelectedMessage" class="form-text text-muted" style="display: none;">Files uploaded</small>
+                <small id="fileSelectedMessage" class="form-text text-muted" style="display: none;">Images selected for upload</small>
             </div>
             <div class="mt-3">
                 <button id="submitButton" class="btn btn-primary">{{ submit_button_text }}</button>
-                <button type="button" class="btn btn-secondary" id="uploadButton">Upload Files</button>
+                <button type="button" class="btn btn-secondary" id="uploadButton">Upload Images</button>
                 <a href="{% url 'dashboard' %}" class="btn btn-outline-primary my-3 mx-4">Go Back</a>
             </div>
         </form>
@@ -22,18 +24,44 @@
 </div>
 
 <script>
-    document.getElementById('uploadButton').addEventListener('click', function() {
-        document.getElementById('id_images').click();
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        $('[data-bs-toggle="tooltip"]').tooltip();
 
-    document.getElementById('id_images').addEventListener('change', function() {
-        if (this.files.length > 0) {
-            document.getElementById('fileSelectedMessage').style.display = 'block';
-            document.getElementById('uploadButton').innerText = 'Images Selected';
-        } else {
-            document.getElementById('fileSelectedMessage').style.display = 'none';
-            document.getElementById('uploadButton').innerText = 'Upload Images';
-        }
+        // Initialize datepicker with restriction on future dates
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+            endDate: new Date()
+        });
+
+        document.getElementById('uploadButton').addEventListener('click', function() {
+            document.getElementById('id_images').click();
+        });
+
+        document.getElementById('id_images').addEventListener('change', function() {
+            if (this.files.length > 0) {
+                document.getElementById('fileSelectedMessage').style.display = 'block';
+                document.getElementById('uploadButton').innerText = 'Images Selected';
+            } else {
+                document.getElementById('fileSelectedMessage').style.display = 'none';
+                document.getElementById('uploadButton').innerText = 'Upload Images';
+            }
+        });
+
+        // Real-time cost formatting
+        const costInput = document.getElementById('id_cost');
+        costInput.addEventListener('input', function() {
+            let value = costInput.value.replace(/[^0-9.]/g, ''); // Remove non-numeric characters except period
+            costInput.value = value;
+        });
+        costInput.addEventListener('blur', function() {
+            let value = costInput.value.replace(/[^0-9.]/g, ''); // Remove non-numeric characters except period
+            let floatValue = parseFloat(value);
+            if (!isNaN(floatValue)) {
+                costInput.value = '$' + floatValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            }
+        });
     });
 </script>
 {% endblock content %}

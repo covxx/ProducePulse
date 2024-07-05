@@ -22,7 +22,9 @@ class InventoryItem(models.Model):
     date_created = models.DateField(auto_now_add=True)
     date_built = models.CharField(max_length=10, default="MM/DD/YYYY")
     built_by = models.CharField(max_length=200, default="Enter Builder Name...")
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)  # Probably should not happen
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
     def __str__(self):
         return self.name
 

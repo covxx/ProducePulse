@@ -49,15 +49,19 @@ class InventoryItemForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter Builder Name...'}),
         max_length=200
     )
+    cost = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Cost'}),
+        required=False
+    )
     images = forms.FileField(
         widget=MultipleFileInput(attrs={'class': 'form-control'}),
         required=False,
-        label='Upload Files or Images'
+        label='Upload Images'
     )
 
     class Meta:
         model = InventoryItem
-        fields = ['customer', 'date_complained', 'date_built', 'built_by', 'category', 'complaint', 'images']
+        fields = ['customer', 'date_complained','complaint', 'category', 'date_built', 'built_by', 'images']
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control'})
         }
@@ -66,6 +70,15 @@ class InventoryItemForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['customer'].queryset = Customer.objects.all()
         self.fields['customer'].empty_label = "Select A Customer"
+
+    def clean_cost(self):
+        cost = self.cleaned_data.get('cost', '').replace('$', '').replace(',', '')
+        if cost:
+            try:
+                cost = float(cost)
+            except ValueError:
+                raise forms.ValidationError("Enter a valid cost.")
+        return cost
 
 class ItemImagesForm(forms.ModelForm):
     images = forms.FileField(
