@@ -1,4 +1,6 @@
 from django import forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Row, Column, Field, Submit
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Category, InventoryItem, ItemImages, Customer
@@ -57,7 +59,7 @@ class InventoryItemForm(forms.ModelForm):
         max_length=2000
     )
     built_by = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 1, 'placeholder': 'Enter Builder Name...'}),
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Builder Name...'}),
         max_length=50
     )
     cost = forms.DecimalField(
@@ -67,14 +69,14 @@ class InventoryItemForm(forms.ModelForm):
         decimal_places=2
     )
     images = forms.FileField(
-        widget=MultipleFileInput(attrs={'class': 'form-control'}),
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
         required=False,
         label='Upload Images'
     )
 
     class Meta:
         model = InventoryItem
-        fields = ['customer', 'date_complained','complaint', 'category', 'date_built', 'built_by', 'images']
+        fields = ['customer', 'date_complained', 'complaint', 'category', 'date_built', 'built_by', 'images']
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control'})
         }
@@ -83,6 +85,21 @@ class InventoryItemForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['customer'].queryset = Customer.objects.all()
         self.fields['customer'].empty_label = "Select A Customer"
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Row(
+                Column('customer', css_class='form-group col-md-3 mb-0'),
+                Column('date_complained', css_class='form-group col-md-3 mb-0'),
+                Column('category', css_class='form-group col-md-3 mb-0'),
+                Column('date_built', css_class='form-group col-md-3 mb-0'),
+                css_class='form-row'
+            ),
+            'built_by',
+            'complaint',
+            'images',
+        )
 
 class ItemImagesForm(forms.ModelForm):
     images = forms.FileField(
@@ -110,6 +127,7 @@ class SearchForm(forms.Form):
             'placeholder': 'Search complaints or items...'
         })
     )
+    
 class ReportForm(forms.Form):
     start_date = forms.DateField(
         widget=forms.TextInput(attrs={'class': 'form-control datepicker'}),
@@ -131,3 +149,18 @@ class ReportForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control'}),
         label="Category"
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Row(
+                Column('start_date', css_class='form-group col-md-3 mb-0'),
+                Column('end_date', css_class='form-group col-md-3 mb-0'),
+                Column('built_by', css_class='form-group col-md-3 mb-0'),
+                Column('category', css_class='form-group col-md-3 mb-0'),
+                css_class='form-row'
+            ),
+            Submit('submit', 'Generate Report', css_class='btn btn-primary')
+        )
