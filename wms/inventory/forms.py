@@ -46,12 +46,14 @@ class InventoryItemForm(forms.ModelForm):
         max_length=2000
     )
     built_by = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter Builder Name...'}),
-        max_length=200
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 1, 'placeholder': 'Enter Builder Name...'}),
+        max_length=50
     )
-    cost = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Cost'}),
-        required=False
+    cost = forms.DecimalField(
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Cost'}),
+        required=False,
+        max_digits=10,
+        decimal_places=2
     )
     images = forms.FileField(
         widget=MultipleFileInput(attrs={'class': 'form-control'}),
@@ -70,15 +72,6 @@ class InventoryItemForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['customer'].queryset = Customer.objects.all()
         self.fields['customer'].empty_label = "Select A Customer"
-
-    def clean_cost(self):
-        cost = self.cleaned_data.get('cost', '').replace('$', '').replace(',', '')
-        if cost:
-            try:
-                cost = float(cost)
-            except ValueError:
-                raise forms.ValidationError("Enter a valid cost.")
-        return cost
 
 class ItemImagesForm(forms.ModelForm):
     images = forms.FileField(

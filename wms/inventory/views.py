@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def validate_image_file(file):
     valid_mime_types = ['image/jpeg', 'image/png', 'image/gif']
-    valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
+    valid_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf']
     max_file_size = 5 * 1024 * 1024  # 5MB
 
     if file.content_type not in valid_mime_types:

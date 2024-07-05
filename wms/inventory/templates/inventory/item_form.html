@@ -8,7 +8,7 @@
             {% csrf_token %}
             {{ form|crispy }}
             <div class="form-group">
-             <!--   <label for="id_images">Upload Images</label>
+              <!--  <label for="id_images">Upload Images</label>
                 {{ form.images }}-->
                 <small id="fileSelectedMessage" class="form-text text-muted" style="display: none;">Images selected for upload</small>
             </div>
@@ -44,21 +44,6 @@
             } else {
                 document.getElementById('fileSelectedMessage').style.display = 'none';
                 document.getElementById('uploadButton').innerText = 'Upload Images';
-            }
-        });
-
-        // Real-time cost formatting
-        const costInput = document.getElementById('id_cost');
-        costInput.addEventListener('input', function() {
-            let value = costInput.value.replace(/[^0-9.]/g, ''); // Remove non-numeric characters except period
-            costInput.value = value;
-        });
-
-        costInput.addEventListener('blur', function() {
-            let value = costInput.value.replace(/[^0-9.]/g, ''); // Remove non-numeric characters except period
-            let floatValue = parseFloat(value);
-            if (!isNaN(floatValue)) {
-                costInput.value = '$' + floatValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
             }
         });
     });
