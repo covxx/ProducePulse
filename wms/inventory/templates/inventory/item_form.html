@@ -1,5 +1,3 @@
-<!-- inventory/item_form.html -->
-
 {% extends 'inventory/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
@@ -10,7 +8,7 @@
             {% csrf_token %}
             {{ form|crispy }}
             <div class="form-group">
-            <!--    <label for="id_images">Upload Images</label>
+             <!--   <label for="id_images">Upload Images</label>
                 {{ form.images }}-->
                 <small id="fileSelectedMessage" class="form-text text-muted" style="display: none;">Images selected for upload</small>
             </div>
@@ -55,6 +53,7 @@
             let value = costInput.value.replace(/[^0-9.]/g, ''); // Remove non-numeric characters except period
             costInput.value = value;
         });
+
         costInput.addEventListener('blur', function() {
             let value = costInput.value.replace(/[^0-9.]/g, ''); // Remove non-numeric characters except period
             let floatValue = parseFloat(value);
