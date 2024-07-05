@@ -98,7 +98,7 @@ class AddItem(LoginRequiredMixin, CreateView):
     form_class = InventoryItemForm
     template_name = 'inventory/item_form.html'
     success_url = reverse_lazy('dashboard')
-    title = "Add New Inventory Item"
+    title = "Add Customer Complaint"
     submit_button_text = "Add Item"
 
     def form_valid(self, form):
