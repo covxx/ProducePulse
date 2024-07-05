@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 import pandas as pd
 import matplotlib.pyplot as plt
 import io
+import os
 import base64
 
 # Get an instance of a logger
@@ -98,31 +99,26 @@ class AddItem(LoginRequiredMixin, CreateView):
     form_class = InventoryItemForm
     template_name = 'inventory/item_form.html'
     success_url = reverse_lazy('dashboard')
-    title = "Add Customer Complaint"
-    submit_button_text = "Add Item"
+    title = "Add New Complaint"
+    submit_button_text = "Add Complaint"
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        response = super().form_valid(form)
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
         
         uploaded_images = self.request.FILES.getlist('images')
         for image in uploaded_images:
-            validate_image_file(image)
+            validate_image_file(image)  # Validate the image file
             ItemImages.objects.create(item=self.object, image=image)
-        logger.info('New item added with ID: %s', self.object.id)
-        return response
+        
+        return redirect(self.success_url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['title'] = self.title
         context['submit_button_text'] = self.submit_button_text
-        return context
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['images_form'] = ItemImagesForm()
-        context['categories'] = Category.objects.all()
         return context
 
 class EditItem(LoginRequiredMixin, UpdateView):

@@ -45,17 +45,28 @@ class InventoryItemForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Enter Complaint...'}),
         max_length=2000
     )
+    built_by = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter Builder Name...'}),
+        max_length=200
+    )
+    images = forms.FileField(
+        widget=MultipleFileInput(attrs={'class': 'form-control'}),
+        required=False,
+        label='Upload Files or Images'
+    )
+
     class Meta:
         model = InventoryItem
-        fields = ['customer', 'date_complained','complaint', 'category', 'date_built', 'built_by']
+        fields = ['customer', 'date_complained', 'date_built', 'built_by', 'category', 'complaint', 'images']
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control'})
         }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['customer'].queryset = Customer.objects.all()
         self.fields['customer'].empty_label = "Select A Customer"
-        
+
 class ItemImagesForm(forms.ModelForm):
     images = forms.FileField(
         widget=MultipleFileInput(attrs={'accept': 'image/*'}), 
