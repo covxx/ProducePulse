@@ -3,6 +3,9 @@
 <head>
     {% load static %}
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'images/favicon-96x96.png' %}">
     <title>ProducePulse</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,33 +29,17 @@
                 todayHighlight: true
             });
 
-            // Client-side validation
-            $('form').on('submit', function(event) {
-                let isValid = true;
-
-                // Check required fields
-                $(this).find('[required]').each(function() {
-                    if (!$(this).val()) {
-                        isValid = false;
-                        $(this).addClass('is-invalid');
-                        $(this).next('.invalid-feedback').show();
-                    } else {
-                        $(this).removeClass('is-invalid');
-                        $(this).next('.invalid-feedback').hide();
-                    }
-                });
-
-                // Prevent form submission if validation fails
-                if (!isValid) {
-                    event.preventDefault();
-                }
+            document.getElementById('uploadButton').addEventListener('click', function() {
+                document.getElementById('id_images').click();
             });
 
-            // Remove validation message on input
-            $('form').find('[required]').on('input', function() {
-                if ($(this).val()) {
-                    $(this).removeClass('is-invalid');
-                    $(this).next('.invalid-feedback').hide();
+            document.getElementById('id_images').addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    document.getElementById('fileSelectedMessage').style.display = 'block';
+                    document.getElementById('uploadButton').innerText = 'Images Selected';
+                } else {
+                    document.getElementById('fileSelectedMessage').style.display = 'none';
+                    document.getElementById('uploadButton').innerText = 'Upload Images';
                 }
             });
         });
