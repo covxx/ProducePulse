@@ -12,9 +12,9 @@ ___________________
 - [ ] Dashboard view with data from logged complaints
 - [ ] Status tagging system
 - [ ] Report and PDF generation 
-- [X] Multi Image and document upload
+- [ ] Multi Image and document upload
 - [ ] Notfication system via email
-- [X] Complaint logging
+- [ ] Complaint logging
 ___________________
 Change Log
 ___________________
