@@ -1,18 +1,14 @@
 {% extends 'inventory/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class='row'>
+<div class="row">
     <div class="col-11 col-md-4 mx-auto mt-5">
-        <h1>{{ view.object.pk|default:"Add New" }} Item</h1>
+        <h1>{{ view.title }}</h1>
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|crispy }}
-            <div class="form-group">
-                <label for="images">Upload Images</label>
-                {{ images_form.images }}
-            </div>
             <div class="mt-3">
-                <button class="btn btn-primary">{{ view.object.pk|default:"Add" }} Item</button> 
+                <button id="submitButton" class="btn btn-primary">{{ view.submit_button_text }}</button>
                 <a href="{% url 'dashboard' %}" class="btn btn-outline-primary my-3 mx-4">Go Back</a>
             </div>
         </form>

@@ -98,6 +98,8 @@ class AddItem(LoginRequiredMixin, CreateView):
     form_class = InventoryItemForm
     template_name = 'inventory/item_form.html'
     success_url = reverse_lazy('dashboard')
+    title = "Add New Inventory Item"
+    submit_button_text = "Add Item"
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -107,9 +109,15 @@ class AddItem(LoginRequiredMixin, CreateView):
         for image in uploaded_images:
             validate_image_file(image)
             ItemImages.objects.create(item=self.object, image=image)
-        
-        logger.info('Item added by user: %s', self.request.user)
+        logger.info('New item added with ID: %s', self.object.id)
         return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['title'] = self.title
+        context['submit_button_text'] = self.submit_button_text
+        return context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

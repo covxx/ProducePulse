@@ -35,9 +35,17 @@ class MultipleFileInput(forms.ClearableFileInput):
         return format_html('<input{} multiple>', flatatt(final_attrs))
 
 class InventoryItemForm(forms.ModelForm):
+    date_complained = forms.DateField(
+        widget=forms.TextInput(attrs={'class': 'form-control datepicker'}),
+        help_text="Select the date the complaint was made."
+    )
+    date_built = forms.DateField(
+        widget=forms.TextInput(attrs={'class': 'form-control datepicker'}),
+        help_text="Select the date the item was built."
+    )
     class Meta:
         model = InventoryItem
-        fields = ['customer','complaint', 'date_complained', 'category', 'date_built', 'built_by']
+        fields = ['customer', 'date_complained','complaint', 'category', 'date_built', 'built_by']
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control'})
         }
@@ -46,7 +54,6 @@ class InventoryItemForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['customer'].queryset = Customer.objects.all()
         self.fields['customer'].empty_label = "Select A Customer"
-
 class ItemImagesForm(forms.ModelForm):
     images = forms.FileField(
         widget=MultipleFileInput(attrs={'accept': 'image/*'}), 
