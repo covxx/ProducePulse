@@ -8,8 +8,13 @@ def upload_to(instance, filename):
     base, ext = os.path.splitext(filename)
     new_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}{ext}"
     return os.path.join('item_images', new_filename)
+class Customer(models.Model):
+    name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
 class InventoryItem(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='inventory_items', null=True, blank=True)
     name = models.CharField(default="Enter Customer Name...", max_length=200)
     complaint = models.TextField(max_length=2000, default="Enter Complaint...")
     date_complained = models.CharField(max_length=10, default="MM/DD/YYYY")
@@ -20,6 +25,7 @@ class InventoryItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)  # Probably should not happen
     def __str__(self):
         return self.name
+
 class Category(models.Model):
     name = models.CharField(max_length=200)
     class Meta:

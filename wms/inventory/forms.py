@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Category, InventoryItem, ItemImages
+from .models import Category, InventoryItem, ItemImages, Customer
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
@@ -37,7 +37,15 @@ class MultipleFileInput(forms.ClearableFileInput):
 class InventoryItemForm(forms.ModelForm):
     class Meta:
         model = InventoryItem
-        fields = ['name', 'complaint', 'date_complained', 'category', 'date_built', 'built_by']
+        fields = ['customer','complaint', 'date_complained', 'category', 'date_built', 'built_by']
+        widgets = {
+            'customer': forms.Select(attrs={'class': 'form-control'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['customer'].queryset = Customer.objects.all()
+        self.fields['customer'].empty_label = "Select A Customer"
 
 class ItemImagesForm(forms.ModelForm):
     images = forms.FileField(
