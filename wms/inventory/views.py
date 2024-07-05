@@ -5,12 +5,15 @@ import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from .forms import UserRegisterForm, InventoryItemForm, ItemImagesForm
+from .forms import UserRegisterForm, InventoryItemForm, ItemImagesForm, UserProfileForm
 from .models import InventoryItem, Category, ItemImages
 from django.core.exceptions import ValidationError
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib import messages
 import pandas as pd
 import matplotlib.pyplot as plt
 import io
@@ -19,6 +22,37 @@ import base64
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
+
+@login_required
+def profile(request):
+    return render(request, 'inventory/profile.html')
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile was successfully updated!')
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=request.user)
+    return render(request, 'inventory/update_profile.html', {'form': form})
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'inventory/change_password.html', {'form': form})
 
 class Index(TemplateView):
     template_name = 'inventory/index.html'
@@ -126,6 +160,8 @@ class EditItem(LoginRequiredMixin, UpdateView):
     form_class = InventoryItemForm
     template_name = 'inventory/item_form.html'
     success_url = reverse_lazy('dashboard')
+    submit_button_text =  'Save Complaint'
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

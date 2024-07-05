@@ -19,5 +19,8 @@ urlpatterns = [
     path('reports/', ReportsView.as_view(), name='reports'),
     path('export/csv/', export_csv, name='export_csv'),
     path('export/excel/', export_excel, name='export_excel'),
+    path('profile/', views.profile, name='profile'),
+    path('profile/update/', views.update_profile, name='update_profile'),
+    path('profile/change-password/', views.change_password, name='change_password'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

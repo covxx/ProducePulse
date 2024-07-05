@@ -9,6 +9,17 @@ from django.forms.utils import flatatt
 from django.core.exceptions import ValidationError
 import os
 
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
 def validate_image_file(file):
     valid_mime_types = ['image/jpeg', 'image/png', 'image/gif']
     valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
