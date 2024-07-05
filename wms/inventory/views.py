@@ -20,6 +20,9 @@ import base64
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+class Index(TemplateView):
+    template_name = 'inventory/index.html'
+
 def validate_image_file(file):
     valid_mime_types = ['image/jpeg', 'image/png', 'image/gif']
     valid_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf']
@@ -34,9 +37,6 @@ def validate_image_file(file):
 
     if file.size > max_file_size:
         raise ValidationError('File size exceeds limit (5MB).')
-
-class Index(TemplateView):
-    template_name = 'inventory/index.html'
 
 class Dashboard(LoginRequiredMixin, View):
     def get(self, request):

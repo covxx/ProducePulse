@@ -1,14 +1,47 @@
 {% extends 'inventory/base.html' %}
-
 {% block content %}
-<div>
-    <div class="row">
-        <div class="col-sm-11 col-md-5 mx-auto mt-5 px-3">
-            <h1 class="fw-light">Track and manage your complaints</h1>
-            <p class="fw-light">Keep track of complaints</p>
-            <div>
-                <a href="{% url 'dashboard' %}" class="btn btn-primary">Log in now!</a>
-            </div>
+<style>
+    {% load static %}
+    .hero-section {
+        background: url('{% static "images/complaint-bg.jpg" %}') no-repeat center center;
+        background-size: cover;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .hero-content {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 40px;
+        border-radius: 10px;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+    }
+
+    .hero-content .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+</style>
+
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="fw-light">Track and Manage Your Complaints</h1>
+        <p class="fw-light">Efficiently keep track of all your complaints with our easy-to-use system. Ensure timely resolution and never lose track of important issues.</p>
+        <div>
+            <a href="{% url 'dashboard' %}" class="btn btn-primary">Log in now!</a>
         </div>
     </div>
 </div>
