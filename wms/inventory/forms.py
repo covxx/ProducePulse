@@ -100,3 +100,35 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+
+class SearchForm(forms.Form):
+    query = forms.CharField(
+        label='Search', 
+        max_length=100, 
+        widget=forms.TextInput(attrs={
+            'class': 'form-control me-2', 
+            'placeholder': 'Search complaints or items...'
+        })
+    )
+    
+class ReportForm(forms.Form):
+    start_date = forms.DateField(
+        widget=forms.TextInput(attrs={'class': 'form-control datepicker'}),
+        label="Start Date"
+    )
+    end_date = forms.DateField(
+        widget=forms.TextInput(attrs={'class': 'form-control datepicker'}),
+        label="End Date"
+    )
+    built_by = forms.CharField(
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Builder Name...'}),
+        label="Built By"
+    )
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Category"
+    )

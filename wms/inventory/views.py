@@ -8,7 +8,7 @@ from django.views.generic import TemplateView, View, CreateView, UpdateView, Del
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from .forms import UserRegisterForm, InventoryItemForm, ItemImagesForm, UserProfileForm
+from .forms import UserRegisterForm, InventoryItemForm, ItemImagesForm, UserProfileForm, SearchForm, ReportForm
 from .models import InventoryItem, Category, ItemImages
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
@@ -19,6 +19,10 @@ import matplotlib.pyplot as plt
 import io
 import os
 import base64
+from django.db.models import Q
+from xhtml2pdf import pisa
+from django.template.loader import render_to_string
+
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -74,9 +78,15 @@ def validate_image_file(file):
 
 class Dashboard(LoginRequiredMixin, View):
     def get(self, request):
-        items = InventoryItem.objects.all().order_by('id')
-        logger.debug('Dashboard view accessed by user: %s', request.user)
-        return render(request, 'inventory/dashboard.html', {'items': items})
+        form = SearchForm()
+        query = request.GET.get('query')
+        if query:
+            items = InventoryItem.objects.filter(
+                Q(name__icontains=query) | Q(complaint__icontains=query) | Q(category__name__icontains=query) | Q(built_by__icontains=query)
+            )
+        else:
+            items = InventoryItem.objects.all()
+        return render(request, 'inventory/dashboard.html', {'items': items, 'form': form})
 
 def item_detail(request, pk):
     item = get_object_or_404(InventoryItem, pk=pk)
@@ -179,67 +189,30 @@ class DeleteItem(LoginRequiredMixin, DeleteView):
         logger.info('Item deleted with ID: %s', self.object.id)
         return response
 
-class ReportsView(LoginRequiredMixin, View):
-    def get(self, request):
-        # Gather data for reports
-        items = InventoryItem.objects.all()
-        data = pd.DataFrame(list(items.values('date_complained', 'category')))
+def generate_report(request):
+    if request.method == 'POST':
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+            built_by = form.cleaned_data['built_by']
+            category = form.cleaned_data['category']
 
-        # Generate charts
-        bar_chart = self.generate_bar_chart(data)
-        pie_chart = self.generate_pie_chart(data)
+            items = InventoryItem.objects.filter(
+                date_built__range=(start_date, end_date)
+            )
+            if built_by:
+                items = items.filter(built_by=built_by)
+            if category:
+                items = items.filter(category=category)
 
-        return render(request, 'inventory/reports.html', {
-            'bar_chart': bar_chart,
-            'pie_chart': pie_chart,
-        })
+            # Render the PDF template
+            html_string = render_to_string('report_template.html', {'items': items})
+            pdf = pisa.CreatePDF(html_string)
 
-    def generate_bar_chart(self, data):
-        plt.figure(figsize=(10, 6))
-        data['category'].value_counts().plot(kind='bar')
-        plt.title('Complaints by Category')
-        plt.xlabel('Category')
-        plt.ylabel('Count')
-
-        buffer = io.BytesIO()
-        plt.savefig(buffer, format='png')
-        buffer.seek(0)
-        image_png = buffer.getvalue()
-        buffer.close()
-
-        graphic = base64.b64encode(image_png)
-        graphic = graphic.decode('utf-8')
-
-        return graphic
-
-    def generate_pie_chart(self, data):
-        plt.figure(figsize=(8, 8))
-        data['category'].value_counts().plot(kind='pie', autopct='%1.1f%%')
-        plt.title('Complaints Distribution by Category')
-
-        buffer = io.BytesIO()
-        plt.savefig(buffer, format='png')
-        buffer.seek(0)
-        image_png = buffer.getvalue()
-        buffer.close()
-
-        graphic = base64.b64encode(image_png)
-        graphic = graphic.decode('utf-8')
-
-        return graphic
-
-def export_csv(request):
-    items = InventoryItem.objects.all()
-    data = pd.DataFrame(list(items.values()))
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=report.csv'
-    data.to_csv(path_or_buf=response, index=False)
-    return response
-
-def export_excel(request):
-    items = InventoryItem.objects.all()
-    data = pd.DataFrame(list(items.values()))
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=report.xlsx'
-    data.to_excel(response, index=False)
-    return response
+            response = HttpResponse(pdf.dest.getvalue(), content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+            return response
+    else:
+        form = ReportForm()
+    return render(request, 'report_form.html', {'form': form})

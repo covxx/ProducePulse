@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table, th, td { border: 1px solid black; }
+        th, td { padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Inventory Report</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Name</th>
+                <th>Complaint</th>
+                <th>Date Built</th>
+                <th>Built By</th>
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.customer.name }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.complaint }}</td>
+                <td>{{ item.date_built }}</td>
+                <td>{{ item.built_by }}</td>
+                <td>{{ item.category.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

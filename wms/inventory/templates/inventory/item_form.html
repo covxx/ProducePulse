@@ -43,8 +43,9 @@
             {% csrf_token %}
             {{ form|crispy }}
             <div class="form-group">
+                <!--
                 <label for="id_images">Upload Images</label>
-                {{ form.images }}
+                {{ form.images }}--> 
                 <small id="fileSelectedMessage" class="form-text text-muted" style="display: none;">Images selected for upload</small>
             </div>
             <div class="mt-3">
