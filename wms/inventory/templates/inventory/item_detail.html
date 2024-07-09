@@ -7,7 +7,20 @@
                 <!-- Display item details -->
                 <tr><th>Complaint ID</th><td>{{ item.id }}</td></tr>
                 <tr><th>Customer Name</th><td>{{ item.name }}</td></tr>
-                <tr><th>Complaint Details</th><td>{{ item.complaint }}</td></tr>
+                <tr>
+                    <th>Complaint Details</th>
+                    <td>
+                        <div class="complaint-thread">
+                            {% for line in item.complaint.splitlines %}
+                                {% if line %}
+                                    <div class="complaint-entry">
+                                        {{ line|safe }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
                 <tr><th>Date Customer Complained</th><td>{{ item.date_complained }}</td></tr>
                 <tr><th>Category</th><td>{{ item.category }}</td></tr>
                 <tr><th>Date Order Built</th><td>{{ item.date_built }}</td></tr>

@@ -30,6 +30,12 @@ class InventoryItem(models.Model):
     date_built = models.CharField(max_length=10, default="MM/DD/YYYY") #Date picker field for built date
     built_by = models.CharField(max_length=200, default="Enter Builder Name...") #Builder name field, text input
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING) #User field, auto stamped
+
+    def append_complaint(self, new_complaint, User): #Function to append new complaint to existing complaint with timestamp, apart of the 'updates' system
+        timestamp = datetime.now().strftime('%m-%d-%Y %H:%M')
+        self.complaint += f"\n[{timestamp}] ({User.username}): {new_complaint}"
+        self.save()
+
     def __str__(self):
         return self.name
 

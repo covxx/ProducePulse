@@ -74,14 +74,15 @@ class InventoryItemForm(forms.ModelForm):
         required=False,
         label='Upload Images'
     )
-    status = forms.CharField(
-        widget=forms.HiddenInput(),
-        initial='new'
+    additional_complaint = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Add additional complaint...'}),
+        max_length=1000,
+        required=False
     )
 
     class Meta:
         model = InventoryItem
-        fields = ['status','customer', 'date_complained', 'complaint', 'category', 'date_built', 'built_by', 'images', ] #Field in order of shown
+        fields = ['status','customer', 'date_complained', 'additional_complaint','complaint', 'category', 'date_built', 'built_by', 'images']
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control'})
         }
@@ -91,19 +92,39 @@ class InventoryItemForm(forms.ModelForm):
         self.fields['customer'].queryset = Customer.objects.all()
         self.fields['customer'].empty_label = "Select A Customer"
 
+        if 'instance' in kwargs and kwargs['instance'] is not None:
+            # Edit mode: complaint field is uneditable and greyed out, status is editable
+            self.fields['complaint'].widget.attrs['readonly'] = True
+            self.fields['complaint'].widget.attrs['style'] = 'background-color: #e9ecef;'
+            self.fields['status'] = forms.ChoiceField(
+                choices=InventoryItem.STATUS_CHOICES,
+                widget=forms.Select(attrs={'class': 'form-control'})
+            )
+        else:
+            # Create mode: complaint field is editable, status and additonal field is hidden
+            self.fields['status'] = forms.CharField(
+                widget=forms.HiddenInput(),
+                initial='new'
+            )
+            self.fields['additional_complaint'] = forms.CharField(
+                widget=forms.HiddenInput(),
+            )
+
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.layout = Layout(
             Row(
                 Column('customer', css_class='form-group col-md-3 mb-0'),
                 Column('date_complained', css_class='form-group col-md-3 mb-0'),
-                Column('category', css_class='form-group col-md-3 mb-0'),
-                Column('date_built', css_class='form-group col-md-3 mb-0'),
                 css_class='form-row'
             ),
             'built_by',
             'complaint',
+            'additional_complaint',  # Add additional_complaint to the layout below complaint
+            'category',
+            'date_built',
             'images',
+            'status'  # Add status to the layout
         )
 
 class ItemImagesForm(forms.ModelForm):

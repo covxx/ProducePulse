@@ -165,11 +165,20 @@ class EditItem(LoginRequiredMixin, UpdateView):
     form_class = InventoryItemForm
     template_name = 'inventory/item_form.html'
     success_url = reverse_lazy('dashboard')
-    submit_button_text =  'Save Complaint'
+    submit_button_text = 'Save Complaint'
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        additional_complaint = form.cleaned_data.get('additional_complaint')
+        self.object.save()  # Save the object before calling append_complaint
+        if additional_complaint:
+            self.object.append_complaint(additional_complaint, self.request.user)
+        return redirect(self.success_url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
+        context['submit_button_text'] = self.submit_button_text
         return context
 
 class DeleteItem(LoginRequiredMixin, DeleteView):

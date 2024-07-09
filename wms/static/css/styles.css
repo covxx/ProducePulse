@@ -22,3 +22,19 @@ h1, h2 {
     color: red;
     font-size: 0.875rem;
 }
+.complaint-thread {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.complaint-entry {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.complaint-entry:last-child {
+    border-bottom: none;
+}
