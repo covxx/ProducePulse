@@ -1,6 +1,3 @@
-# views.py
-import matplotlib
-matplotlib.use('Agg')  # Use a non-interactive backend
 import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -14,17 +11,12 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
-import pandas as pd
-import matplotlib.pyplot as plt
-import io
-import os
-import base64
 from django.db.models import Q
 from xhtml2pdf import pisa
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from datetime import datetime
-
+import os
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -151,6 +143,7 @@ class AddItem(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user
+        self.object.status = 'New'  # Ensure status is set to 'new'
         self.object.save()
         
         uploaded_images = self.request.FILES.getlist('images')
@@ -173,7 +166,6 @@ class EditItem(LoginRequiredMixin, UpdateView):
     template_name = 'inventory/item_form.html'
     success_url = reverse_lazy('dashboard')
     submit_button_text =  'Save Complaint'
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

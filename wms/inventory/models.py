@@ -14,15 +14,22 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 class InventoryItem(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='inventory_items', null=True, blank=True)
-    name = models.CharField(default="Enter Customer Name...", max_length=200)
+    STATUS_CHOICES = [ # For Status Tagging Syste,
+        ('new', 'New'),
+        ('in_progress', 'In Progress'),
+        ('waiting', 'Waiting'),
+        ('closed', 'Closed')
+    ]
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='inventory_items', null=True, blank=True) #Customer field dropdown
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='New') #For status tagging system
+    name = models.CharField(default="Enter Customer Name...", max_length=200) #Old cs name field
     complaint = models.TextField(max_length=2000, default="Enter Complaint...")
-    date_complained = models.CharField(max_length=10, default="MM/DD/YYYY")
-    category = models.ForeignKey('Category', on_delete=models.SET_NULL, blank=True, null=True)
-    date_created = models.DateField(auto_now_add=True)
-    date_built = models.CharField(max_length=10, default="MM/DD/YYYY")
-    built_by = models.CharField(max_length=200, default="Enter Builder Name...")
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    date_complained = models.CharField(max_length=10, default="MM/DD/YYYY") #Date picker field for complained date
+    category = models.ForeignKey('Category', on_delete=models.SET_NULL, blank=True, null=True) #Category dropdown
+    date_created = models.DateField(auto_now_add=True) #Date created field, is timestamped
+    date_built = models.CharField(max_length=10, default="MM/DD/YYYY") #Date picker field for built date
+    built_by = models.CharField(max_length=200, default="Enter Builder Name...") #Builder name field, text input
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING) #User field, auto stamped
     def __str__(self):
         return self.name
 

@@ -1,3 +1,4 @@
+# forms.py
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Field, Submit
@@ -46,7 +47,7 @@ class MultipleFileInput(forms.ClearableFileInput):
             value = []
         final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
         return format_html('<input{} multiple>', flatatt(final_attrs))
-    
+
 class InventoryItemForm(forms.ModelForm):
     date_complained = forms.DateField(
         widget=forms.TextInput(attrs={'class': 'form-control datepicker'})
@@ -73,10 +74,14 @@ class InventoryItemForm(forms.ModelForm):
         required=False,
         label='Upload Images'
     )
+    status = forms.CharField(
+        widget=forms.HiddenInput(),
+        initial='new'
+    )
 
     class Meta:
         model = InventoryItem
-        fields = ['customer', 'date_complained', 'complaint', 'category', 'date_built', 'built_by', 'images']
+        fields = ['status','customer', 'date_complained', 'complaint', 'category', 'date_built', 'built_by', 'images', ] #Field in order of shown
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control'})
         }
@@ -111,6 +116,7 @@ class ItemImagesForm(forms.ModelForm):
     class Meta:
         model = ItemImages
         fields = ['images']
+
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
 
@@ -127,7 +133,7 @@ class SearchForm(forms.Form):
             'placeholder': 'Search complaints or items...'
         })
     )
-    
+
 class ReportForm(forms.Form):
     start_date = forms.DateField(
         widget=forms.TextInput(attrs={'class': 'form-control datepicker'}),
