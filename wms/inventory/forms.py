@@ -1,4 +1,3 @@
-# forms.py
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Field, Submit
@@ -82,7 +81,7 @@ class InventoryItemForm(forms.ModelForm):
 
     class Meta:
         model = InventoryItem
-        fields = ['status','customer', 'date_complained', 'additional_complaint','complaint', 'category', 'date_built', 'built_by', 'images']
+        fields = ['customer', 'date_complained', 'complaint', 'category', 'date_built', 'built_by', 'images', 'status']
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control'})
         }
@@ -101,14 +100,12 @@ class InventoryItemForm(forms.ModelForm):
                 widget=forms.Select(attrs={'class': 'form-control'})
             )
         else:
-            # Create mode: complaint field is editable, status and additonal field is hidden
+            # Create mode: complaint field is editable, status is hidden
             self.fields['status'] = forms.CharField(
                 widget=forms.HiddenInput(),
                 initial='new'
             )
-            self.fields['additional_complaint'] = forms.CharField(
-                widget=forms.HiddenInput(),
-            )
+            self.fields.pop('additional_complaint')
 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
@@ -120,7 +117,7 @@ class InventoryItemForm(forms.ModelForm):
             ),
             'built_by',
             'complaint',
-            'additional_complaint',  # Add additional_complaint to the layout below complaint
+            'additional_complaint',  # Ensure additional_complaint is conditionally included
             'category',
             'date_built',
             'images',

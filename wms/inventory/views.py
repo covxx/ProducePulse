@@ -1,4 +1,4 @@
-import logging
+import logging, os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView
@@ -16,7 +16,6 @@ from xhtml2pdf import pisa
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from datetime import datetime
-import os
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
