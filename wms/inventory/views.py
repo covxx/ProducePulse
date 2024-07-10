@@ -16,6 +16,7 @@ from xhtml2pdf import pisa
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from datetime import datetime
+from django.contrib.auth import views as auth_views
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -110,7 +111,12 @@ def item_detail(request, pk):
         'item': item,
         'images': images
     })
-
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    email_template_name = 'password_reset_email.html'
+    subject_template_name = 'password_reset_subject.txt'
+    template_name = 'password_reset_form.html'
+    success_url = reverse_lazy('password_reset_done')
+    
 class SignUpView(View):
     def get(self, request):
         form = UserRegisterForm()
