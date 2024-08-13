@@ -61,8 +61,7 @@ def validate_image_file(file):
     max_file_size = 5 * 1024 * 1024  # 5MB
 
     if file.content_type not in valid_mime_types:
-        raise ValidationError('Unsupported file type.')
-
+        raise ValidationError('Unsupported file type.') # Raise an error if the file type is not supported``
     ext = os.path.splitext(file.name)[1]
     if ext.lower() not in valid_extensions:
         raise ValidationError('Unsupported file extension.')
