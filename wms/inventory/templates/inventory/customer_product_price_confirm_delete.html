@@ -1,0 +1,12 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Delete Customer Product Price</h2>
+    <p>Are you sure you want to delete the price for "{{ object.product.name }}" for customer "{{ object.customer.name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <a href="{% url 'customer_product_price_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

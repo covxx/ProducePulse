@@ -3,7 +3,74 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 from datetime import datetime
 import os
+import uuid
+#Order system START
 
+class Product(models.Model):
+    name = models.CharField(max_length=255)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+class OrderCustomer(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    delivery_address = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class Product(models.Model):
+    name = models.CharField(max_length=255)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+class OrderCustomerProductPrice(models.Model):
+    order_customer = models.ForeignKey(OrderCustomer, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        unique_together = ('order_customer', 'product')
+
+    def __str__(self):
+        return f"{self.order_customer.name} - {self.product.name}: ${self.price}"
+
+
+class CustomerProductPrice(models.Model):
+    order_customer = models.ForeignKey(OrderCustomer, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        unique_together = ('order_customer', 'product')
+
+    def __str__(self):
+        return f"{self.order_customer.name} - {self.product.name}: ${self.price}"
+
+class Order(models.Model):
+    order_number = models.CharField(max_length=12, unique=True, editable=False, default=uuid.uuid4().hex[:12])
+    order_customer = models.ForeignKey(OrderCustomer, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    purchase_order_number = models.CharField(max_length=20, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order {self.order_number} - {self.order_customer.name}"
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    unit = models.CharField(max_length=10, choices=[('cases', 'Cases'), ('pounds', 'Pounds')])
+
+    def __str__(self):
+        return f"{self.product.name} - {self.quantity} {self.unit} in Order {self.order.order_number}"
+#Order system END
 def upload_to(instance, filename):
     base, ext = os.path.splitext(filename)
     new_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}{ext}"

@@ -1,0 +1,88 @@
+{% extends 'inventory/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Create New Order</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <h3>Order Items</h3>
+        <table class="table" id="orderitems">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ orderitem_formset.management_form }}
+                {% for form in orderitem_formset %}
+                <tr>
+                    <td>{{ form.product }}</td>
+                    <td>{{ form.quantity }}</td>
+                    <td>{{ form.unit }}</td>
+                    <td>
+                        {% if not forloop.first %}
+                        <button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                <!-- Empty form for adding new items -->
+                <tr id="empty-form" style="display: none;">
+                    <td>
+                        <select name="orderitem_set-__prefix__-product" class="form-control"></select>
+                    </td>
+                    <td>
+                        <input type="number" name="orderitem_set-__prefix__-quantity" class="form-control" />
+                    </td>
+                    <td>
+                        <select name="orderitem_set-__prefix__-unit" class="form-control">
+                            <option value="cases">Cases</option>
+                            <option value="pounds">Pounds</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit Order</button>
+            <button type="button" class="btn btn-secondary" onclick="addRow()">Add Item</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function addRow() {
+    // Clone the empty form template
+    var formIdx = document.getElementById('id_orderitem_set-TOTAL_FORMS').value;
+    var emptyFormTemplate = document.getElementById('empty-form').outerHTML;
+
+    // Replace __prefix__ with the current form index
+    var newRowHtml = emptyFormTemplate.replace(/__prefix__/g, formIdx);
+
+    // Create a new DOM element for the row
+    var newRow = document.createElement('tr');
+    newRow.innerHTML = newRowHtml;
+    newRow.style.display = '';  // Ensure the row is visible
+
+    // Append the new row to the table
+    document.getElementById('orderitems').getElementsByTagName('tbody')[0].appendChild(newRow);
+
+    // Update the total forms count
+    document.getElementById('id_orderitem_set-TOTAL_FORMS').value = parseInt(formIdx) + 1;
+}
+
+function removeRow(btn) {
+    // Remove the row from the table
+    var row = btn.closest('tr');
+    row.parentNode.removeChild(row);
+}
+</script>
+{% endblock content %}

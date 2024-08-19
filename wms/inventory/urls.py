@@ -1,14 +1,15 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report
+from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report, CreateOrderView, CreateOrderCustomerView, OrderCustomerListView, EditOrderCustomerView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView,  CustomerProductPriceListView, OrderCustomerProductPriceCreateView, OrderCustomerProductPriceUpdateView, OrderCustomerProductPriceDeleteView, update_profile, change_password
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
     path('', Index.as_view(), name='index'),
-   #path('dashboard/', Dashboard.as_view(), name="dashboard"),
+    path('create_order/', CreateOrderView.as_view(), name="create_order"),
+    #path('dashboard/', Dashboard.as_view(), name="dashboard"),
     path('cdashboard/', cDashboard.as_view(), name="cdashboard"),
     path('add-item/', AddItem.as_view(), name="add-item"),
     path('edit-item/<int:pk>', EditItem.as_view(), name='edit-item'),
@@ -25,6 +26,15 @@ urlpatterns = [
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
-
-
+    path('add_customer/', CreateOrderCustomerView.as_view(), name='add_customer'),
+    path('customers/', OrderCustomerListView.as_view(), name='order_customer_list'),
+    path('edit_customer/<int:pk>/', EditOrderCustomerView.as_view(), name='edit_customer'),
+    path('products/', ProductListView.as_view(), name='product_list'),
+    path('products/add/', ProductCreateView.as_view(), name='product_create'),
+    path('products/edit/<int:pk>/', ProductUpdateView.as_view(), name='product_edit'),
+    path('products/delete/<int:pk>/', ProductDeleteView.as_view(), name='product_delete'),
+    path('customer-product-prices/', CustomerProductPriceListView.as_view(), name='customer_product_price_list'),
+    path('customer-product-prices/add/', OrderCustomerProductPriceCreateView.as_view(), name='customer_product_price_create'),
+    path('customer-product-prices/edit/<int:pk>/', OrderCustomerProductPriceUpdateView.as_view(), name='customer_product_price_edit'),
+    path('customer-product-prices/delete/<int:pk>/', OrderCustomerProductPriceDeleteView.as_view(), name='customer_product_price_delete'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

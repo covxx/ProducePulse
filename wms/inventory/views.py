@@ -1,12 +1,14 @@
 import logging, os
+from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView, ListView
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from .forms import UserRegisterForm, InventoryItemForm, ItemImagesForm, UserProfileForm, SearchForm, ReportForm
-from .models import InventoryItem, Category, ItemImages
+from django.forms import inlineformset_factory
+from .forms import UserRegisterForm, InventoryItemForm, ItemImagesForm, UserProfileForm, SearchForm, ReportForm, OrderForm, OrderItemForm, OrderCustomerForm, ProductForm, CustomerProductPrice, OrderCustomerProductPrice, OrderForm, OrderItemFormSetFactory
+from .models import InventoryItem, Category, ItemImages, Order, OrderItem, OrderCustomer, Product, CustomerProductPrice, OrderCustomerProductPrice, Order, OrderItem 
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -242,3 +244,114 @@ def generate_report(request):
         form = ReportForm()
 
     return render(request, 'inventory/report_form.html', {'form': form})
+#Order system START
+#OrderItemFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
+class CreateOrderView(CreateView):
+    model = Order
+    form_class = OrderForm
+    template_name = 'inventory/create_order.html'
+    success_url = reverse_lazy('order_list')
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            order_customer = self.request.POST.get('order_customer')
+            data['orderitem_formset'] = OrderItemFormSetFactory(self.request.POST, instance=self.object, order_customer=order_customer)
+        else:
+            order_customer = self.request.GET.get('order_customer')
+            data['orderitem_formset'] = OrderItemFormSetFactory(instance=self.object, order_customer=order_customer)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        orderitem_formset = context['orderitem_formset']
+        if orderitem_formset.is_valid():
+            self.object = form.save()
+            orderitem_formset.instance = self.object
+            orderitem_formset.save()
+            return redirect(self.success_url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+        
+class OrderCustomerProductPriceForm(forms.ModelForm):
+    class Meta:
+        model = OrderCustomerProductPrice
+        fields = ['order_customer', 'product', 'price']
+        widgets = {
+            'order_customer': forms.Select(attrs={'class': 'form-control'}),
+            'product': forms.Select(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+class OrderCustomerProductPriceListView(ListView):
+    model = OrderCustomerProductPrice
+    template_name = 'inventory/order_customer_product_price_list.html'
+    context_object_name = 'order_customer_product_prices'
+
+class OrderCustomerProductPriceCreateView(CreateView):
+    model = OrderCustomerProductPrice
+    form_class = OrderCustomerProductPriceForm
+    template_name = 'inventory/order_customer_product_price_form.html'
+    success_url = reverse_lazy('order_customer_product_price_list')
+
+class OrderCustomerProductPriceUpdateView(UpdateView):
+    model = OrderCustomerProductPrice
+    form_class = OrderCustomerProductPriceForm
+    template_name = 'inventory/order_customer_product_price_form.html'
+    success_url = reverse_lazy('order_customer_product_price_list')
+
+class OrderCustomerProductPriceDeleteView(DeleteView):
+    model = OrderCustomerProductPrice
+    template_name = 'inventory/order_customer_product_price_confirm_delete.html'
+    success_url = reverse_lazy('order_customer_product_price_list')
+
+class CustomerProductPriceListView(ListView):
+    model = CustomerProductPrice
+    template_name = 'inventory/customer_product_price_list.html'
+    context_object_name = 'customer_product_prices'
+
+class ProductListView(ListView):
+    model = Product
+    template_name = 'inventory/product_list.html'
+    context_object_name = 'products'
+
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'inventory/product_form.html'
+    success_url = reverse_lazy('product_list')
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'inventory/product_form.html'
+    success_url = reverse_lazy('product_list')
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = 'inventory/product_confirm_delete.html'
+    success_url = reverse_lazy('product_list')
+
+class OrderHistoryView(ListView):
+    model = Order
+    template_name = 'inventory/order_history.html'
+
+    def get_queryset(self):
+        return Order.objects.filter(order_customer=self.kwargs['customer_id']).order_by('-created_at')
+
+class CreateOrderCustomerView(CreateView):
+    model = OrderCustomer
+    form_class = OrderCustomerForm
+    template_name = 'inventory/create_order_customer.html'
+    success_url = reverse_lazy('order_customer_list')
+
+class OrderCustomerListView(ListView):
+    model = OrderCustomer
+    template_name = 'inventory/order_customer_list.html'
+    context_object_name = 'customers'
+
+class EditOrderCustomerView(UpdateView):
+    model = OrderCustomer
+    form_class = OrderCustomerForm
+    template_name = 'inventory/edit_order_customer.html'
+    success_url = reverse_lazy('order_customer_list')
+#Order system END
