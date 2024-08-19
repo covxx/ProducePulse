@@ -1,14 +1,15 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from .views import Index, SignUpView, Dashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report
+from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
     path('', Index.as_view(), name='index'),
-    path('cdashboard/', Dashboard.as_view(), name="cdashboard"),
+   #path('dashboard/', Dashboard.as_view(), name="dashboard"),
+    path('cdashboard/', cDashboard.as_view(), name="cdashboard"),
     path('add-item/', AddItem.as_view(), name="add-item"),
     path('edit-item/<int:pk>', EditItem.as_view(), name='edit-item'),
     path('delete-item/<int:pk>', DeleteItem.as_view(), name='delete-item'),

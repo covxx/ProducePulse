@@ -69,7 +69,7 @@ def validate_image_file(file):
     if file.size > max_file_size:
         raise ValidationError('File size exceeds limit (5MB).')
 
-class Dashboard(LoginRequiredMixin, View):
+class cDashboard(LoginRequiredMixin, View):
     def get(self, request):
         form = SearchForm()
         query = request.GET.get('query')
@@ -168,7 +168,7 @@ class EditItem(LoginRequiredMixin, UpdateView):
     model = InventoryItem
     form_class = InventoryItemForm
     template_name = 'inventory/item_form.html'
-    success_url = reverse_lazy('dashboard')
+    success_url = reverse_lazy('cdashboard')
     submit_button_text = 'Save Complaint'
 
     def form_valid(self, form):
@@ -188,7 +188,7 @@ class EditItem(LoginRequiredMixin, UpdateView):
 class DeleteItem(LoginRequiredMixin, DeleteView):
     model = InventoryItem
     template_name = 'inventory/delete_item.html'
-    success_url = reverse_lazy('dashboard')
+    success_url = reverse_lazy('cdashboard')
     context_object_name = 'item'
 
     def delete(self, request, *args, **kwargs):
