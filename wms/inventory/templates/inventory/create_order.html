@@ -31,10 +31,15 @@
                     </td>
                 </tr>
                 {% endfor %}
-                <!-- Empty form for adding new items -->
+
+                <!-- Empty form template -->
                 <tr id="empty-form" style="display: none;">
                     <td>
-                        <select name="orderitem_set-__prefix__-product" class="form-control"></select>
+                        <select name="orderitem_set-__prefix__-product" class="form-control product-select">
+                            {% for product in product_list %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
                     </td>
                     <td>
                         <input type="number" name="orderitem_set-__prefix__-quantity" class="form-control" />
@@ -59,9 +64,25 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle dynamic unit update based on product selection
+    document.querySelectorAll('select[name$="-product"]').forEach(function(selectElement) {
+        selectElement.addEventListener('change', function() {
+            updateUnitField(this);
+        });
+    });
+});
+
 function addRow() {
-    // Clone the empty form template
-    var formIdx = document.getElementById('id_orderitem_set-TOTAL_FORMS').value;
+    var totalFormsInput = document.getElementById('id_items-TOTAL_FORMS');  // Updated to match the actual ID
+
+    // Check if the element exists before trying to access its value
+    if (!totalFormsInput) {
+        console.error("Total forms input not found.");
+        return;
+    }
+
+    var formIdx = totalFormsInput.value;
     var emptyFormTemplate = document.getElementById('empty-form').outerHTML;
 
     // Replace __prefix__ with the current form index
@@ -73,16 +94,34 @@ function addRow() {
     newRow.style.display = '';  // Ensure the row is visible
 
     // Append the new row to the table
-    document.getElementById('orderitems').getElementsByTagName('tbody')[0].appendChild(newRow);
+    var tableBody = document.getElementById('orderitems').getElementsByTagName('tbody')[0];
+    tableBody.appendChild(newRow);
 
     // Update the total forms count
-    document.getElementById('id_orderitem_set-TOTAL_FORMS').value = parseInt(formIdx) + 1;
-}
+    totalFormsInput.value = parseInt(formIdx) + 1;
 
+    // Attach event listener to the newly added product dropdown
+    var productSelect = newRow.querySelector('select[name$="-product"]');
+    productSelect.addEventListener('change', function() {
+        updateUnitField(this);
+    });
+}
 function removeRow(btn) {
-    // Remove the row from the table
     var row = btn.closest('tr');
     row.parentNode.removeChild(row);
+}
+
+function updateUnitField(productSelectElement) {
+    var selectedProductId = productSelectElement.value;
+    var unitInput = productSelectElement.closest('tr').querySelector('select[name$="-unit"]');
+
+    // Fetch the unit from the server
+    fetch(`/get-product-unit/${selectedProductId}/`)
+        .then(response => response.json())
+        .then(data => {
+            // Update the unit input field with the fetched value
+            unitInput.value = data.unit;
+        });
 }
 </script>
 {% endblock content %}

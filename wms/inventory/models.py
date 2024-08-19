@@ -7,24 +7,24 @@ import uuid
 #Order system START
 
 class Product(models.Model):
+    UNIT_CHOICES = [
+        ('cases', 'Cases'),
+        ('pounds', 'Pounds'),
+    ]
+
     name = models.CharField(max_length=255)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    unit = models.CharField(max_length=10, choices=UNIT_CHOICES, default='cases')  # Default value added
+
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.get_unit_display()})"
 
 class OrderCustomer(models.Model):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
     delivery_address = models.CharField(max_length=255, blank=True)
-
-    def __str__(self):
-        return self.name
-
-class Product(models.Model):
-    name = models.CharField(max_length=255)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.name

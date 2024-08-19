@@ -194,11 +194,13 @@ class ReportForm(forms.Form):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'unit_price']
+        fields = ['name', 'unit_price', 'unit']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'unit_price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'unit': forms.Select(attrs={'class': 'form-control'}),
         }
+        
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
@@ -218,21 +220,16 @@ class OrderItemForm(forms.ModelForm):
         fields = ['product', 'quantity', 'unit']
 
     def __init__(self, *args, **kwargs):
-        order_customer = kwargs.pop('order_customer', None)
         super().__init__(*args, **kwargs)
-        if order_customer:
-            self.fields['product'].queryset = Product.objects.all()
+        self.fields['product'].widget.attrs.update({'class': 'form-control'})
+        self.fields['quantity'].widget.attrs.update({'class': 'form-control'})
+        self.fields['unit'].widget.attrs.update({'class': 'form-control', 'readonly': 'readonly'})
 
     def clean(self):
         cleaned_data = super().clean()
         product = cleaned_data.get('product')
-        order_customer = self.initial.get('order_customer')
-        if product and order_customer:
-            try:
-                customer_price = OrderCustomerProductPrice.objects.get(order_customer=order_customer, product=product)
-                cleaned_data['price'] = customer_price.price
-            except OrderCustomerProductPrice.DoesNotExist:
-                cleaned_data['price'] = product.unit_price
+        if product:
+            cleaned_data['unit'] = product.unit  # Automatically set the unit based on the product
         return cleaned_data
 
 class OrderItemFormSet(BaseInlineFormSet):

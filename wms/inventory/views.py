@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView, ListView
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.forms import inlineformset_factory
 from .forms import UserRegisterForm, InventoryItemForm, ItemImagesForm, UserProfileForm, SearchForm, ReportForm, OrderForm, OrderItemForm, OrderCustomerForm, ProductForm, CustomerProductPrice, OrderCustomerProductPrice, OrderForm, OrderItemFormSetFactory
 from .models import InventoryItem, Category, ItemImages, Order, OrderItem, OrderCustomer, Product, CustomerProductPrice, OrderCustomerProductPrice, Order, OrderItem 
@@ -354,4 +354,8 @@ class EditOrderCustomerView(UpdateView):
     form_class = OrderCustomerForm
     template_name = 'inventory/edit_order_customer.html'
     success_url = reverse_lazy('order_customer_list')
+
+def get_product_unit(request, product_id):
+    product = Product.objects.get(pk=product_id)
+    return JsonResponse({'unit': product.unit})
 #Order system END
