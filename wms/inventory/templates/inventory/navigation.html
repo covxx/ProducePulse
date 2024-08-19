@@ -1,32 +1,71 @@
 <nav class="navbar navbar-expand-lg bg-light"> 
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'index' %}"> Produce Pulse</a> <!--changed to dashboard from index-->
+        <a class="navbar-brand" href="{% url 'index' %}">Produce Pulse</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-            {% if user.is_authenticated %}
-            <li class"nav-item">
-                <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
-            </li>
-            <li class"nav-item">
-                <a class="nav-link" href="{% url 'generate_report' %}">Reports</a>
-            </li>
-            <li class"nav-item">
-                <a class="nav-link" href="{% url 'add-item' %}">Add Item</a>
-            </li>
-            <li class"nav-item">
-                <a class="nav-link" href="{% url 'profile' %}">{{ user.username }}</a>
-            </li>
-            <li class"nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Sign Out </a>
-            {% else %}
-            <a class="nav-link" href="{% url 'login' %}">Log In </a>
-            <a class="nav-link" href="{% url 'signup' %}">Sign Up </a>
-            {% endif %}
-        </li>
-        </ul>    
-    </div>      
-</div>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="orderprocessDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Order Processing
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="orderprocessDropdown">
+                        <li><a class="dropdown-item" href="<!--{% url 'dashboard' %}-->">Order Entry</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'dashboard' %}-->">Build Order</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">Order Dashboard</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="wmsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Inventory
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="wmsDropdown">
+                        <li><a class="dropdown-item" href="<!--{% url 'dashboard' %}-->">Receive Inventory</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">Adjust Inventory</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'generate_report' %}-->">Manage Inventory</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dashboardDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Quality Control
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dashboardDropdown">
+                        <li><a class="dropdown-item" href="{% url 'dashboard' %}">Overview</a></li>
+                        <li><a class="dropdown-item" href="{% url 'add-item' %}">Add Item</a></li>
+                        <li><a class="dropdown-item" href="{% url 'generate_report' %}">Reports</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Administration
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                        <li><a class="dropdown-item" href="<!--{% url 'generate_report' %}-->">Item Management</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'dashboard' %}-->">Manage Customers</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">Manage Vendors</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">User Management</a></li>
+                    </ul>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Sign Out</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                </li>
+                {% endif %}
+            </ul>    
+        </div>      
+    </div>
 </nav>
