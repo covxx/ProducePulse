@@ -53,11 +53,20 @@ class CustomerProductPrice(models.Model):
         return f"{self.order_customer.name} - {self.product.name}: ${self.price}"
 
 class Order(models.Model):
-    order_number = models.CharField(max_length=12, unique=True, editable=False, default=uuid.uuid4().hex[:12])
+    order_number = models.PositiveIntegerField(unique=True, editable=False)
     order_customer = models.ForeignKey(OrderCustomer, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     purchase_order_number = models.CharField(max_length=20, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.order_number:
+            last_order = Order.objects.all().order_by('id').last()
+            if last_order:
+                self.order_number = last_order.order_number + 1
+            else:
+                self.order_number = 0  # Start with 0 if this is the first order
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Order {self.order_number} - {self.order_customer.name}"

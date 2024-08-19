@@ -200,11 +200,14 @@ class ProductForm(forms.ModelForm):
             'unit_price': forms.NumberInput(attrs={'class': 'form-control'}),
             'unit': forms.Select(attrs={'class': 'form-control'}),
         }
-        
+
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['order_customer', 'purchase_order_number']
+        widgets = {
+            'order_number': forms.TextInput(attrs={'readonly': 'readonly'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

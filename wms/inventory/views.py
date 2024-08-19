@@ -358,4 +358,40 @@ class EditOrderCustomerView(UpdateView):
 def get_product_unit(request, product_id):
     product = Product.objects.get(pk=product_id)
     return JsonResponse({'unit': product.unit})
+
+def order_history(request):
+    orders_list = Order.objects.all().order_by('-created_at')
+    paginator = Paginator(orders_list, 10)  # Show 10 orders per page
+
+    page_number = request.GET.get('page')
+    orders = paginator.get_page(page_number)
+
+    context = {
+        'orders': orders
+    }
+    return render(request, 'inventory/order_history.html', context)
+class OrderEditView(UpdateView):
+    model = Order
+    form_class = OrderForm
+    template_name = 'inventory/edit_order.html'
+    success_url = reverse_lazy('order_history')
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['orderitem_formset'] = OrderItemFormSetFactory(self.request.POST, instance=self.object)
+        else:
+            data['orderitem_formset'] = OrderItemFormSetFactory(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        orderitem_formset = context['orderitem_formset']
+        if orderitem_formset.is_valid():
+            self.object = form.save()
+            orderitem_formset.instance = self.object
+            orderitem_formset.save()
+            return super().form_valid(form)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 #Order system END
