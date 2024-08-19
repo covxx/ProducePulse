@@ -79,7 +79,7 @@ class Dashboard(LoginRequiredMixin, View):
             )
         else:
             items = InventoryItem.objects.all()
-        return render(request, 'inventory/dashboard.html', {'items': items, 'form': form})
+        return render(request, 'inventory/cdashboard.html', {'items': items, 'form': form})
 
 def item_detail(request, pk):
     item = get_object_or_404(InventoryItem, pk=pk)
@@ -140,7 +140,7 @@ class AddItem(LoginRequiredMixin, CreateView):
     model = InventoryItem
     form_class = InventoryItemForm
     template_name = 'inventory/item_form.html'
-    success_url = reverse_lazy('dashboard')
+    success_url = reverse_lazy('cdashboard')
     title = "Add New Complaint"
     submit_button_text = "Add Complaint"
 

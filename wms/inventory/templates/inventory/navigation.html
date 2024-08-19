@@ -13,8 +13,8 @@
                         Order Processing
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="orderprocessDropdown">
-                        <li><a class="dropdown-item" href="<!--{% url 'dashboard' %}-->">Order Entry</a></li>
-                        <li><a class="dropdown-item" href="<!--{% url 'dashboard' %}-->">Build Order</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'cdashboard' %}-->">Order Entry</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'cdashboard' %}-->">Build Order</a></li>
                         <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">Order Dashboard</a></li>
                     </ul>
                 </li>
@@ -23,7 +23,7 @@
                         Inventory
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="wmsDropdown">
-                        <li><a class="dropdown-item" href="<!--{% url 'dashboard' %}-->">Receive Inventory</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'cdashboard' %}-->">Receive Inventory</a></li>
                         <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">Adjust Inventory</a></li>
                         <li><a class="dropdown-item" href="<!--{% url 'generate_report' %}-->">Manage Inventory</a></li>
                     </ul>
@@ -33,7 +33,7 @@
                         Quality Control
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dashboardDropdown">
-                        <li><a class="dropdown-item" href="{% url 'dashboard' %}">Overview</a></li>
+                        <li><a class="dropdown-item" href="{% url 'cdashboard' %}">Overview</a></li>
                         <li><a class="dropdown-item" href="{% url 'add-item' %}">Add Item</a></li>
                         <li><a class="dropdown-item" href="{% url 'generate_report' %}">Reports</a></li>
                     </ul>
@@ -44,7 +44,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                         <li><a class="dropdown-item" href="<!--{% url 'generate_report' %}-->">Item Management</a></li>
-                        <li><a class="dropdown-item" href="<!--{% url 'dashboard' %}-->">Manage Customers</a></li>
+                        <li><a class="dropdown-item" href="<!--{% url 'cdashboard' %}-->">Manage Customers</a></li>
                         <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">Manage Vendors</a></li>
                         <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">User Management</a></li>
                     </ul>

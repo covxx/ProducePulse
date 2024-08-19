@@ -8,7 +8,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('', Index.as_view(), name='index'),
-    path('dashboard/', Dashboard.as_view(), name="dashboard"),
+    path('cdashboard/', Dashboard.as_view(), name="cdashboard"),
     path('add-item/', AddItem.as_view(), name="add-item"),
     path('edit-item/<int:pk>', EditItem.as_view(), name='edit-item'),
     path('delete-item/<int:pk>', DeleteItem.as_view(), name='delete-item'),

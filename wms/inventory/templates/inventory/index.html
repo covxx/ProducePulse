@@ -67,7 +67,11 @@
         <h1 class="fw-light">Full Stack WMS Management System</h1>
         <p class="fw-light"> ** NEED TEXT HERE **</p>
         <div>
-            <a href="{% url 'dashboard' %}" class="btn btn-primary" id='login button' onclick="showLoader()">Log In</a>
+            {% if user.is_authenticated %} 
+            <a href="{% url 'cdashboard' %}" class="btn btn-primary" id='login button' onclick="showLoader()">Dashboard</a>
+            {% else %}
+            <a href="{% url 'cdashboard' %}" class="btn btn-primary" id='login button' onclick="showLoader()">Log In</a>
+            {% endif %} 
         </div>
         <div class="loader" id="loader"></div>
     </div>
