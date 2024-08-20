@@ -73,7 +73,6 @@ SECRET_KEY = 'django-insecure-)x@(5!l(&z3)fscdkn)endrz()kd8w*%80z0vx9*xtieqfefos
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -173,21 +172,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/user_images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Allowed Hostname / addresses
-ALLOWED_HOSTS = ['192.168.1.112', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.158', 'localhost', '127.0.0.1']
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
 LOGIN_REDIRECT_URL = '/dashboard'
-
 LOGIN_URL = '/login'
 SITE_ID = 1
 
