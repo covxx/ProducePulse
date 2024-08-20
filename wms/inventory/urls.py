@@ -9,7 +9,7 @@ from django.conf import settings
 urlpatterns = [
     path('', Index.as_view(), name='index'),
     path('create_order/', CreateOrderView.as_view(), name="create_order"),
-    #path('dashboard/', Dashboard.as_view(), name="dashboard"),
+    path('dashboard/', cDashboard.as_view(), name="dashboard"),
     path('cdashboard/', cDashboard.as_view(), name="cdashboard"),
     path('add-item/', AddItem.as_view(), name="add-item"),
     path('edit-item/<int:pk>', EditItem.as_view(), name='edit-item'),

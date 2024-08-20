@@ -244,7 +244,7 @@ def generate_report(request):
         form = ReportForm()
 
     return render(request, 'inventory/report_form.html', {'form': form})
-#Order system START
+#Order system STARTF
 #OrderItemFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
 class CreateOrderView(CreateView):
     model = Order
