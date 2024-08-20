@@ -172,7 +172,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/user_images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Allowed Hostname / addresses
-ALLOWED_HOSTS = ['192.168.1.158', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.159', 'localhost', '127.0.0.1']
 
 
 # Default primary key field type
