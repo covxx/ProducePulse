@@ -250,28 +250,27 @@ class CreateOrderView(CreateView):
     model = Order
     form_class = OrderForm
     template_name = 'inventory/create_order.html'
-    success_url = reverse_lazy('order_list')
-
-    def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
-        if self.request.POST:
-            order_customer = self.request.POST.get('order_customer')
-            data['orderitem_formset'] = OrderItemFormSetFactory(self.request.POST, instance=self.object, order_customer=order_customer)
-        else:
-            order_customer = self.request.GET.get('order_customer')
-            data['orderitem_formset'] = OrderItemFormSetFactory(instance=self.object, order_customer=order_customer)
-        return data
+    success_url = reverse_lazy('order_history')
 
     def form_valid(self, form):
+        form.instance.created_by = self.request.user  # Set the created_by field to the logged-in user
         context = self.get_context_data()
         orderitem_formset = context['orderitem_formset']
         if orderitem_formset.is_valid():
             self.object = form.save()
             orderitem_formset.instance = self.object
             orderitem_formset.save()
-            return redirect(self.success_url)
+            return super().form_valid(form)
         else:
             return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['orderitem_formset'] = OrderItemFormSetFactory(self.request.POST, instance=self.object)
+        else:
+            data['orderitem_formset'] = OrderItemFormSetFactory(instance=self.object)
+        return data
         
 class OrderCustomerProductPriceForm(forms.ModelForm):
     class Meta:
@@ -282,6 +281,7 @@ class OrderCustomerProductPriceForm(forms.ModelForm):
             'product': forms.Select(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
 class OrderCustomerProductPriceListView(ListView):
     model = OrderCustomerProductPrice
     template_name = 'inventory/order_customer_product_price_list.html'
