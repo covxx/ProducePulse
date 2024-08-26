@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Field, Submit
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Category, InventoryItem, ItemImages, Customer, Order, OrderItem, Customer, Product, OrderCustomer, CustomerProductPrice,OrderCustomerProductPrice
+from .models import Category, InventoryItem, ItemImages, Customer, Order, OrderItem, Customer, Product, OrderCustomer, CustomerProductPrice,OrderCustomerProductPrice, OrderItemLot 
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
@@ -204,9 +204,9 @@ class ProductForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['order_customer', 'purchase_order_number']
+        fields = ['order_customer', 'purchase_order_number', 'build_date']  # Exclude 'order_number'
         widgets = {
-            'order_number': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'build_date': forms.DateInput(attrs={'type': 'date'}),  # Date input for build date
         }
 
     def __init__(self, *args, **kwargs):
@@ -283,3 +283,16 @@ class OrderCustomerForm(forms.ModelForm):
             raise forms.ValidationError("Please enter a valid delivery address.")
         return delivery_address
 #Order system END
+
+class OrderItemFulfillmentForm(forms.ModelForm):
+    class Meta:
+        model = OrderItemLot
+        fields = ['lot', 'quantity_used']
+
+OrderItemFulfillmentFormSetFactory = inlineformset_factory(
+    OrderItem,
+    OrderItemLot,
+    form=OrderItemFulfillmentForm,
+    extra=1,
+    can_delete=True
+)

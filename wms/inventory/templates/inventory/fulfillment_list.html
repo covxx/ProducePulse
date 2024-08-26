@@ -1,0 +1,30 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Order Fulfillment</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Order Number</th>
+                <th>Customer</th>
+                <th>Order Date</th>
+                <th>Build Date</th>  <!-- New Build Date Column -->
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_number }}</td>
+                <td>{{ order.order_customer.name }}</td>
+                <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ order.build_date|date:"Y-m-d" }}</td>  <!-- Display Build Date -->
+                <td>
+                    <a href="{% url 'fulfill_order' order.id %}" class="btn btn-primary btn-sm">Fulfill Order</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

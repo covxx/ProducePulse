@@ -3,6 +3,10 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Create New Order</h2>
+
+    <!-- Display the order number -->
+   <!--<p><strong>Order Number:</strong> {{ form.instance.order_number }}</p>-->
+
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}
@@ -31,33 +35,11 @@
                     </td>
                 </tr>
                 {% endfor %}
-
-                <!-- Empty form template -->
-                <tr id="empty-form" style="display: none;">
-                    <td>
-                        <select name="orderitem_set-__prefix__-product" class="form-control product-select">
-                            {% for product in product_list %}
-                                <option value="{{ product.id }}">{{ product.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" name="orderitem_set-__prefix__-quantity" class="form-control" />
-                    </td>
-                    <td>
-                        <select name="orderitem_set-__prefix__-unit" class="form-control">
-                            <option value="cases">Cases</option>
-                            <option value="pounds">Pounds</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>
-                    </td>
-                </tr>
             </tbody>
         </table>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary">Submit Order</button>
+            <button type="submit" class="btn btn-primary" name="save_order">Save Order</button>
+            <button type="submit" class="btn btn-success" name="submit_order">Submit Order</button>
             <button type="button" class="btn btn-secondary" onclick="addRow()">Add Item</button>
         </div>
     </form>

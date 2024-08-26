@@ -4,8 +4,15 @@ from django.utils.text import slugify
 from datetime import datetime
 import os
 import uuid
-#Order system START
+#Fullfillment SYS Start
+class OrderCustomer(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    delivery_address = models.CharField(max_length=255, blank=True)
 
+    def __str__(self):
+        return self.name
 class Product(models.Model):
     UNIT_CHOICES = [
         ('cases', 'Cases'),
@@ -19,15 +26,72 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_unit_display()})"
-
-class OrderCustomer(models.Model):
+class Vendor(models.Model):
     name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255, blank=True)
-    phone_number = models.CharField(max_length=20, blank=True)
-    delivery_address = models.CharField(max_length=255, blank=True)
+    contact_info = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
+
+class Product(models.Model):
+    name = models.CharField(max_length=255)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    unit = models.CharField(max_length=10, choices=[('cases', 'Cases'), ('pounds', 'Pounds')])
+
+    def __str__(self):
+        return self.name
+
+class Lot(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='lots')
+    lot_number = models.CharField(max_length=255)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    quantity_in = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity_used = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def available_quantity(self):
+        return self.quantity_in - self.quantity_used
+
+    def __str__(self):
+        return f"{self.product.name} - {self.lot_number} (Vendor: {self.vendor.name})"
+class Order(models.Model):
+    order_number = models.PositiveIntegerField(unique=True, editable=False)
+    order_customer = models.ForeignKey(OrderCustomer, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    purchase_order_number = models.CharField(max_length=20, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_submitted = models.BooleanField(default=False)  # Track if the order is submitted
+    build_date = models.DateField(null=True, blank=True)  # New field for build date
+
+    def save(self, *args, **kwargs):
+        if not self.order_number:
+            last_order = Order.objects.all().order_by('id').last()
+            if last_order:
+                self.order_number = last_order.order_number + 1
+            else:
+                self.order_number = 0  # Start with 0 if this is the first order
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Order {self.order_number} - {self.order_customer.name}"
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    unit = models.CharField(max_length=10, choices=[('cases', 'Cases'), ('pounds', 'Pounds')])
+    lots = models.ManyToManyField(Lot, through='OrderItemLot')
+
+    def __str__(self):
+        return f"{self.product.name} - {self.quantity} {self.unit} in Order {self.order.order_number}"
+
+class OrderItemLot(models.Model):
+    order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
+    lot = models.ForeignKey(Lot, on_delete=models.CASCADE)
+    quantity_used = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Lot {self.lot.lot_number} - {self.quantity_used} used for {self.order_item}"
+#Order system START
 
 class OrderCustomerProductPrice(models.Model):
     order_customer = models.ForeignKey(OrderCustomer, on_delete=models.CASCADE)
@@ -52,33 +116,6 @@ class CustomerProductPrice(models.Model):
     def __str__(self):
         return f"{self.order_customer.name} - {self.product.name}: ${self.price}"
 
-class Order(models.Model):
-    order_number = models.PositiveIntegerField(unique=True, editable=False)
-    order_customer = models.ForeignKey(OrderCustomer, on_delete=models.CASCADE)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    purchase_order_number = models.CharField(max_length=20, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        if not self.order_number:
-            last_order = Order.objects.all().order_by('id').last()
-            if last_order:
-                self.order_number = last_order.order_number + 1
-            else:
-                self.order_number = 0  # Start with 0 if this is the first order
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Order {self.order_number} - {self.order_customer.name}"
-
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2)
-    unit = models.CharField(max_length=10, choices=[('cases', 'Cases'), ('pounds', 'Pounds')])
-
-    def __str__(self):
-        return f"{self.product.name} - {self.quantity} {self.unit} in Order {self.order.order_number}"
 #Order system END
 def upload_to(instance, filename):
     base, ext = os.path.splitext(filename)

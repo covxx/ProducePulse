@@ -1,0 +1,81 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Fulfill Order {{ order.order_number }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <h3>Order Items</h3>
+        {{ orderitem_formset.management_form }}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>  <!-- Product Column -->
+                    <th>Lot Number</th>
+                    <th>Quantity Used</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <td>{{ form.instance.product.name }}</td>  <!-- Existing -->
+    <td>{{ form.instance.product }}</td>  <!-- Check if product instance exists -->
+    <td>{{ form.instance }}</td>  <!-- Check if the form instance exists -->
+                <td>{{ form }}</td>  <!-- Check the form data -->
+
+                {% for form in orderitem_formset %}
+                <tr>
+                    <!-- Manually display the product name associated with this order item -->
+                    <td>{{ form.instance.product.name }}</td>  
+                    <td>{{ form.lot }}</td>
+                    <td>{{ form.quantity_used }}</td>
+                    <td>
+                        {% if not forloop.first %}
+                        <button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit Fulfillment</button>
+            <button type="button" class="btn btn-secondary" onclick="addRow()">Add Lot</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function addRow() {
+    var formIdx = document.getElementById('id_orderitem_formset-TOTAL_FORMS').value;
+    var emptyFormTemplate = document.getElementById('empty-form').outerHTML;
+    var newRowHtml = emptyFormTemplate.replace(/__prefix__/g, formIdx);
+    var newRow = document.createElement('tr');
+    newRow.innerHTML = newRowHtml;
+    newRow.style.display = '';
+    document.getElementById('orderitems').getElementsByTagName('tbody')[0].appendChild(newRow);
+    document.getElementById('id_orderitem_formset-TOTAL_FORMS').value = parseInt(formIdx) + 1;
+}
+
+function removeRow(btn) {
+    var row = btn.closest('tr');
+    row.parentNode.removeChild(row);
+}
+</script>
+
+<!--<Empty form template for adding new lots -->
+<!--<tr id="empty-form" style="display: none;">-->
+  <!---  <td></td>   Empty Product Name Column for new rows -->
+   <!--<td>
+        <select name="orderitem_formset-__prefix__-lot" class="form-control">
+            {% for lot in form.instance.product.lots.all %}
+                <option value="{{ lot.id }}">{{ lot.lot_number }} (Available: {{ lot.available_quantity }})</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+        <input type="number" name="orderitem_formset-__prefix__-quantity_used" class="form-control" />
+    </td>
+    <td>
+        <button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>
+    </td>
+</tr> -->
+{% endblock %}

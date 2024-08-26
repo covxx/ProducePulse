@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report, CreateOrderView, CreateOrderCustomerView, OrderCustomerListView, EditOrderCustomerView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView,  CustomerProductPriceListView, OrderCustomerProductPriceCreateView, OrderCustomerProductPriceUpdateView, OrderCustomerProductPriceDeleteView, update_profile, change_password, get_product_unit, order_history, OrderEditView
+from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report, CreateOrderView, CreateOrderCustomerView, OrderCustomerListView, EditOrderCustomerView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView,  CustomerProductPriceListView, OrderCustomerProductPriceCreateView, OrderCustomerProductPriceUpdateView, OrderCustomerProductPriceDeleteView, update_profile, change_password, get_product_unit, order_history, OrderEditView, FulfillmentListView, FulfillOrderView, OrderCustomerProductPriceDeleteView
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
@@ -40,5 +40,7 @@ urlpatterns = [
     path('get-product-unit/<int:product_id>/', get_product_unit, name='get_product_unit'),
     path('order/edit/<int:pk>/', OrderEditView.as_view(), name='order_edit'),
     path('order-history/', order_history, name='order_history'),
+    path('fulfillment/', FulfillmentListView.as_view(), name='fulfillment_list'),
+    path('fulfillment/<int:pk>/', FulfillOrderView.as_view(), name='fulfill_order'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
