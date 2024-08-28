@@ -24,8 +24,8 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="wmsDropdown">
                         <li><a class="dropdown-item" href="{% url 'receive_product' %}">Receive Inventory</a></li>
-                        <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">Adjust Inventory</a></li>
-                        <li><a class="dropdown-item" href="<!--{% url 'generate_report' %}-->">Manage Inventory</a></li>
+                       <!--<li><a class="dropdown-item" href="{% url 'add-item' %}>Adjust Inventory</a></li>-->
+                        <li><a class="dropdown-item" href="{% url 'product_list' %}">Manage Inventory</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -55,6 +55,7 @@
                     <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                         <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Sign Out</a></li>
+                        <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin Panel</a></li>
                     </ul>
                 </li>
                 {% else %}

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report, CreateOrderView, CreateOrderCustomerView, OrderCustomerListView, EditOrderCustomerView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView,  CustomerProductPriceListView, OrderCustomerProductPriceCreateView, OrderCustomerProductPriceUpdateView, OrderCustomerProductPriceDeleteView, update_profile, change_password, get_product_unit, order_history, OrderEditView, FulfillmentListView, FulfillOrderView, OrderCustomerProductPriceDeleteView, VendorListView, VendorCreateView, VendorUpdateView, VendorDeleteView, ReceiveProductView, ReceiptView
+from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report, CreateOrderView, CreateOrderCustomerView, OrderCustomerListView, EditOrderCustomerView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView,  CustomerProductPriceListView, OrderCustomerProductPriceCreateView, OrderCustomerProductPriceUpdateView, OrderCustomerProductPriceDeleteView, update_profile, change_password, get_product_unit, order_history, OrderEditView, FulfillmentListView, FulfillOrderView, OrderCustomerProductPriceDeleteView, VendorListView, VendorCreateView, VendorUpdateView, VendorDeleteView, ReceiveProductView, ReceiptView, LotListView, LotDetailView
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
@@ -48,5 +48,7 @@ urlpatterns = [
     path('vendors/delete/<int:pk>/', VendorDeleteView.as_view(), name='vendor_delete'),
     path('receive-product/', ReceiveProductView.as_view(), name='receive_product'),
     path('receipt/<int:pk>/', ReceiptView.as_view(), name='receipt'),
+    path('product/<int:product_id>/lots/', LotListView.as_view(), name='lot_list'),
+    path('lots/<int:pk>/', LotDetailView.as_view(), name='lot_detail'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,7 +2,7 @@ import logging, os
 from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView, ListView
+from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
@@ -508,3 +508,26 @@ class ReceiveProductView(View):
             'vendor_form': vendor_form,
             'formset': formset
         })
+class LotListView(ListView):
+    model = Lot
+    template_name = 'inventory/lot_list.html'
+    context_object_name = 'lots'
+
+    def get_queryset(self):
+        self.product = get_object_or_404(Product, pk=self.kwargs['product_id'])
+        return Lot.objects.filter(product=self.product)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product'] = self.product
+        return context
+
+class LotDetailView(DetailView):
+    model = Lot
+    template_name = 'inventory/lot_detail.html'
+    context_object_name = 'lot'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['movements'] = OrderItemLot.objects.filter(lot=self.object).order_by('-order_item__order__created_at')
+        return context
