@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report, CreateOrderView, CreateOrderCustomerView, OrderCustomerListView, EditOrderCustomerView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView,  CustomerProductPriceListView, OrderCustomerProductPriceCreateView, OrderCustomerProductPriceUpdateView, OrderCustomerProductPriceDeleteView, update_profile, change_password, get_product_unit, order_history, OrderEditView, FulfillmentListView, FulfillOrderView, OrderCustomerProductPriceDeleteView
+from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report, CreateOrderView, CreateOrderCustomerView, OrderCustomerListView, EditOrderCustomerView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView,  CustomerProductPriceListView, OrderCustomerProductPriceCreateView, OrderCustomerProductPriceUpdateView, OrderCustomerProductPriceDeleteView, update_profile, change_password, get_product_unit, order_history, OrderEditView, FulfillmentListView, FulfillOrderView, OrderCustomerProductPriceDeleteView, VendorListView, VendorCreateView, VendorUpdateView, VendorDeleteView, ReceiveProductView, ReceiptView
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
@@ -42,5 +42,11 @@ urlpatterns = [
     path('order-history/', order_history, name='order_history'),
     path('fulfillment/', FulfillmentListView.as_view(), name='fulfillment_list'),
     path('fulfillment/<int:pk>/', FulfillOrderView.as_view(), name='fulfill_order'),
+    path('vendors/', VendorListView.as_view(), name='vendor_list'),
+    path('vendors/new/', VendorCreateView.as_view(), name='vendor_create'),
+    path('vendors/edit/<int:pk>/', VendorUpdateView.as_view(), name='vendor_update'),
+    path('vendors/delete/<int:pk>/', VendorDeleteView.as_view(), name='vendor_delete'),
+    path('receive-product/', ReceiveProductView.as_view(), name='receive_product'),
+    path('receipt/<int:pk>/', ReceiptView.as_view(), name='receipt'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

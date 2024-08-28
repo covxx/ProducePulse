@@ -3,13 +3,14 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Field, Submit
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Category, InventoryItem, ItemImages, Customer, Order, OrderItem, Customer, Product, OrderCustomer, CustomerProductPrice,OrderCustomerProductPrice, OrderItemLot 
+from .models import Category, InventoryItem, ItemImages, Customer, Order, OrderItem, Customer, Product, OrderCustomer, CustomerProductPrice,OrderCustomerProductPrice, OrderItemLot, Vendor, Lot
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 from django.forms.utils import flatatt
 from django.core.exceptions import ValidationError
 from django.forms.models import inlineformset_factory, BaseInlineFormSet
+from django.forms import modelformset_factory
 import os
 import re
 
@@ -191,6 +192,27 @@ class ReportForm(forms.Form):
             Submit('submit', 'Generate Report', css_class='btn btn-primary')
         )
 #Order system START
+class LotForm(forms.ModelForm):
+    class Meta:
+        model = Lot
+        fields = ['product', 'quantity_in', 'vendor']  # Exclude 'lot_number'
+        widgets = {
+            'product': forms.Select(attrs={'class': 'form-control'}),
+            'quantity_in': forms.NumberInput(attrs={'class': 'form-control'}),
+            'vendor': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+LotFormSet = modelformset_factory(
+    Lot,
+    form=LotForm,
+    extra=5,  # Default to 5 empty lines
+    can_delete=True  # Allow removing lines
+)
+class VendorForm(forms.ModelForm):
+    class Meta:
+        model = Vendor
+        fields = ['name', 'contact_info']
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -296,3 +318,9 @@ OrderItemFulfillmentFormSetFactory = inlineformset_factory(
     extra=1,
     can_delete=True
 )
+class ReceiveProductForm(forms.Form):
+    vendor = forms.ModelChoiceField(
+        queryset=Vendor.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Select Vendor"
+    )

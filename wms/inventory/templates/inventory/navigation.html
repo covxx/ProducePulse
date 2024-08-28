@@ -23,7 +23,7 @@
                         Inventory
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="wmsDropdown">
-                        <li><a class="dropdown-item" href="<!--{% url 'cdashboard' %}-->">Receive Inventory</a></li>
+                        <li><a class="dropdown-item" href="{% url 'receive_product' %}">Receive Inventory</a></li>
                         <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">Adjust Inventory</a></li>
                         <li><a class="dropdown-item" href="<!--{% url 'generate_report' %}-->">Manage Inventory</a></li>
                     </ul>
@@ -45,7 +45,7 @@
                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                         <li><a class="dropdown-item" href="{% url 'product_list' %}">Item Management</a></li>
                         <li><a class="dropdown-item" href="{% url 'order_customer_list' %}">Manage Customers</a></li>
-                        <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">Manage Vendors</a></li>
+                        <li><a class="dropdown-item" href="{% url 'vendor_list' %}">Manage Vendors</a></li>
                         <li><a class="dropdown-item" href="<!--{% url 'add-item' %}-->">User Management</a></li>
                     </ul>
                 <li class="nav-item dropdown">

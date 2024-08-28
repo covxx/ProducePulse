@@ -1,0 +1,28 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Vendors</h2>
+    <a href="{% url 'vendor_create' %}" class="btn btn-primary mb-3">Add Vendor</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Contact Info</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vendor in object_list %}
+            <tr>
+                <td>{{ vendor.name }}</td>
+                <td>{{ vendor.contact_info }}</td>
+                <td>
+                    <a href="{% url 'vendor_update' vendor.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'vendor_delete' vendor.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

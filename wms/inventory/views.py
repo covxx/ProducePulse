@@ -7,8 +7,8 @@ from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.forms import inlineformset_factory
-from .forms import UserRegisterForm, InventoryItemForm, ItemImagesForm, UserProfileForm, SearchForm, ReportForm, OrderForm, OrderItemForm, OrderCustomerForm, ProductForm, CustomerProductPrice, OrderCustomerProductPrice, OrderForm, OrderItemFormSetFactory, OrderItemFulfillmentFormSetFactory
-from .models import InventoryItem, Category, ItemImages, Order, OrderItem, OrderCustomer, Product, CustomerProductPrice, OrderCustomerProductPrice, Order, OrderItem, OrderItemLot, Lot
+from .forms import UserRegisterForm, InventoryItemForm, ItemImagesForm, UserProfileForm, SearchForm, ReportForm, OrderForm, OrderItemForm, OrderCustomerForm, ProductForm, CustomerProductPrice, OrderCustomerProductPrice, OrderForm, OrderItemFormSetFactory, OrderItemFulfillmentFormSetFactory, VendorForm, ReceiveProductForm, LotFormSet
+from .models import InventoryItem, Category, ItemImages, Order, OrderItem, OrderCustomer, Product, CustomerProductPrice, OrderCustomerProductPrice, Order, OrderItem, OrderItemLot, Lot, Vendor
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -137,6 +137,18 @@ class SignUpView(View):
             return redirect('index')
         logger.error('Sign up failed for data: %s', form.errors)
         return render(request, 'inventory/signup.html', {'form': form})
+    
+class ReceiveProductView(View):
+    def get(self, request):
+        form = ReceiveProductForm()
+        return render(request, 'inventory/receive_product.html', {'form': form})
+
+    def post(self, request):
+        form = ReceiveProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('receive_product')  # Redirect back to form for more entries or change to a receipt view
+        return render(request, 'inventory/receive_product.html', {'form': form})
 
 class AddItem(LoginRequiredMixin, CreateView):
     model = InventoryItem
@@ -246,6 +258,28 @@ def generate_report(request):
     return render(request, 'inventory/report_form.html', {'form': form})
 #Order system STARTF
 #OrderItemFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemForm, extra=1)
+
+class VendorListView(ListView):
+    model = Vendor
+    template_name = 'inventory/vendor_list.html'
+
+class VendorCreateView(CreateView):
+    model = Vendor
+    form_class = VendorForm
+    template_name = 'inventory/vendor_form.html'
+    success_url = reverse_lazy('vendor_list')
+
+class VendorUpdateView(UpdateView):
+    model = Vendor
+    form_class = VendorForm
+    template_name = 'inventory/vendor_form.html'
+    success_url = reverse_lazy('vendor_list')
+
+class VendorDeleteView(DeleteView):
+    model = Vendor
+    template_name = 'inventory/vendor_confirm_delete.html'
+    success_url = reverse_lazy('vendor_list')
+
 class CreateOrderView(CreateView):
     model = Order
     form_class = OrderForm
@@ -441,4 +475,36 @@ class FulfillOrderView(View):
         return render(request, 'inventory/fulfill_order.html', {
             'order': order,
             'orderitem_formset': orderitem_formset
+        })
+    
+class ReceiptView(View):
+    def get(self, request, pk):
+        lot = get_object_or_404(Lot, pk=pk)
+        return render(request, 'inventory/receipt.html', {'lot': lot})
+
+class ReceiveProductView(View):
+    def get(self, request):
+        vendor_form = ReceiveProductForm()
+        formset = LotFormSet(queryset=Lot.objects.none())  # Start with an empty formset
+        return render(request, 'inventory/receive_product.html', {
+            'vendor_form': vendor_form,
+            'formset': formset
+        })
+
+    def post(self, request):
+        vendor_form = ReceiveProductForm(request.POST)
+        formset = LotFormSet(request.POST)
+
+        if vendor_form.is_valid() and formset.is_valid():
+            vendor = vendor_form.cleaned_data['vendor']
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.vendor = vendor  # Set the vendor for each lot based on the selected vendor
+                instance.lot_number = Lot.generate_lot_number()  # Automatically generate the lot number
+                instance.save()
+            return redirect('receive_product')  # Redirect back to form for more entries or change to a receipt view
+
+        return render(request, 'inventory/receive_product.html', {
+            'vendor_form': vendor_form,
+            'formset': formset
         })

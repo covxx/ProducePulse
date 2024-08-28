@@ -4,7 +4,15 @@ from django.utils.text import slugify
 from datetime import datetime
 import os
 import uuid
+from django.utils import timezone
 #Fullfillment SYS Start
+class Vendor(models.Model):
+    name = models.CharField(max_length=255)
+    contact_info = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
 class OrderCustomer(models.Model):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255, blank=True)
@@ -43,16 +51,28 @@ class Product(models.Model):
 
 class Lot(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='lots')
-    lot_number = models.CharField(max_length=255)
+    lot_number = models.PositiveIntegerField(unique=True, editable=False)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     quantity_in = models.DecimalField(max_digits=10, decimal_places=2)
     quantity_used = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    date_received = models.DateField(auto_now_add=True)
 
     def available_quantity(self):
         return self.quantity_in - self.quantity_used
 
     def __str__(self):
-        return f"{self.product.name} - {self.lot_number} (Vendor: {self.vendor.name})"
+        return f"{self.product.name} - Lot #{self.lot_number} (Vendor: {self.vendor.name})"
+
+    @staticmethod
+    def generate_lot_number():
+        last_lot = Lot.objects.all().order_by('lot_number').last()
+        last_order_lot = OrderItemLot.objects.all().order_by('lot__lot_number').last()
+        
+        last_lot_number = last_lot.lot_number if last_lot else -1
+        last_order_lot_number = last_order_lot.lot.lot_number if last_order_lot else -1
+        
+        return max(last_lot_number, last_order_lot_number) + 1
+    
 class Order(models.Model):
     order_number = models.PositiveIntegerField(unique=True, editable=False)
     order_customer = models.ForeignKey(OrderCustomer, on_delete=models.CASCADE)

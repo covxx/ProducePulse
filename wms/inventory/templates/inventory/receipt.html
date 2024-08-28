@@ -1,0 +1,11 @@
+{% extends 'inventory/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Receipt for Lot {{ lot.lot_number }}</h2>
+    <p><strong>Vendor:</strong> {{ lot.vendor.name }}</p>
+    <p><strong>Product:</strong> {{ lot.product.name }}</p>
+    <p><strong>Quantity Received:</strong> {{ lot.quantity_in }}</p>
+    <p><strong>Date Received:</strong> {{ lot.date_received }}</p>
+    <a href="#" class="btn btn-primary" onclick="window.print()">Print Receipt</a>
+</div>
+{% endblock %}

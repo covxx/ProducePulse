@@ -1,0 +1,74 @@
+{% extends 'inventory/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Receive Inventory</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Vendor Selection Form -->
+        <div class="form-group">
+            <label for="id_vendor">Vendor</label>
+            {{ vendor_form.vendor|as_crispy_field }}
+        </div>
+        
+        <h3>Product Lines</h3>
+        {{ formset.management_form }}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Lot Number</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                <tr>
+                    <td>{{ form.product }}</td>
+                    <td>{{ form.quantity_in }}</td>
+                    <td>
+                        <!-- Display generated lot number -->
+                        {% if form.instance.pk %}
+                            Lot #{{ form.instance.lot_number }}
+                        {% else %}
+                            To be generated
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not forloop.first %}
+                        <button type="button" class="btn btn-danger" onclick="removeRow(this)">Remove</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-secondary" id="add-row">Add Line</button>
+        </div>
+    </form>
+</div>
+
+<script>
+// JavaScript to handle adding and removing rows dynamically
+document.getElementById('add-row').addEventListener('click', function() {
+    var formIdx = document.getElementById('id_form-TOTAL_FORMS').value;
+    var newForm = document.querySelectorAll('tbody tr')[0].cloneNode(true);
+    newForm.innerHTML = newForm.innerHTML.replace(/form-(\d+)-/g, `form-${formIdx}-`);
+    newForm.querySelector('input').value = '';  // Clear input values
+    newForm.querySelector('select').value = ''; // Clear select values
+    newForm.querySelector('.btn-danger').style.display = ''; // Show remove button
+    document.querySelector('tbody').appendChild(newForm);
+    document.getElementById('id_form-TOTAL_FORMS').value = parseInt(formIdx) + 1;
+});
+
+function removeRow(button) {
+    var row = button.closest('tr');
+    row.remove();
+    document.getElementById('id_form-TOTAL_FORMS').value = parseInt(document.getElementById('id_form-TOTAL_FORMS').value) - 1;
+}
+</script>
+{% endblock %}
