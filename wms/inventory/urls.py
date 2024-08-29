@@ -50,5 +50,7 @@ urlpatterns = [
     path('receipt/<int:pk>/', ReceiptView.as_view(), name='receipt'),
     path('product/<int:product_id>/lots/', LotListView.as_view(), name='lot_list'),
     path('lots/<int:pk>/', LotDetailView.as_view(), name='lot_detail'),
+    path('js/', LotDetailView.as_view(), name='lot_detail'),
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

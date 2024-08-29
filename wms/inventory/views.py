@@ -1,7 +1,7 @@
 import logging, os
 from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -414,22 +414,27 @@ def order_history(request):
 class OrderEditView(UpdateView):
     model = Order
     form_class = OrderForm
-    template_name = 'inventory/edit_order.html'
-    success_url = reverse_lazy('order_history')
+    template_name = 'inventory/order_edit.html'
+    context_object_name = 'order'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['orderitem_formset'] = OrderItemFormSetFactory(self.request.POST, instance=self.object)
+        else:
+            context['orderitem_formset'] = OrderItemFormSetFactory(instance=self.object)
+        return context
 
     def form_valid(self, form):
         context = self.get_context_data()
         orderitem_formset = context['orderitem_formset']
+        
         if orderitem_formset.is_valid():
-            if 'submit_order' in self.request.POST:
-                form.instance.is_submitted = True  # Mark the order as submitted
-            # Save the form and the related order items
-                self.object = form.save()
-                orderitem_formset.instance = self.object
-                orderitem_formset.save()
-                return super().form_valid(form)
+            self.object = form.save()
+            orderitem_formset.instance = self.object
+            orderitem_formset.save()
+            return redirect(reverse('order_dashboard'))  # Redirect to the order dashboard
         else:
-            # If the formset is not valid, re-render the form with the errors
             return self.render_to_response(self.get_context_data(form=form))
             
 #Order system END
@@ -443,9 +448,7 @@ class FulfillmentListView(View):
 class FulfillOrderView(View):
     def get(self, request, pk):
         order = get_object_or_404(Order, pk=pk)
-        order_items = OrderItem.objects.filter(order=order)
-        print("Order Items:", order_items)  # Debugging: Print the queryset to console
-
+        order_items = OrderItem.objects.filter(order=order).select_related('product')
         orderitem_formset = OrderItemFulfillmentFormSetFactory(queryset=order_items)
         return render(request, 'inventory/fulfill_order.html', {
             'order': order,
@@ -454,11 +457,28 @@ class FulfillOrderView(View):
 
     def post(self, request, pk):
         order = get_object_or_404(Order, pk=pk)
-        order_items = OrderItem.objects.filter(order=order)
+        order_items = OrderItem.objects.filter(order=order).select_related('product')
         orderitem_formset = OrderItemFulfillmentFormSetFactory(request.POST, queryset=order_items)
-        
+
+        print(f"Processing order: {order}")
         if orderitem_formset.is_valid():
-            orderitem_formset.save()
+            for form in orderitem_formset:
+                order_item_lot = form.save(commit=False)
+                order_item_lot.order_item = form.instance
+                print(f"OrderItem: {order_item_lot.order_item}")
+                print(f"Associated Product: {order_item_lot.order_item.product}")
+
+                # Check if the order_item has a product
+                if order_item_lot.order_item.product:
+                    order_item_lot.save()
+                else:
+                    # Handle the case where a product is missing
+                    print(f"Error: OrderItem ID {order_item_lot.order_item.id} has no associated product.")
+                    return render(request, 'inventory/fulfill_order.html', {
+                        'order': order,
+                        'orderitem_formset': orderitem_formset,
+                        'error': 'One or more order items are missing associated products.'
+                    })
             return redirect('fulfillment_list')
         
         return render(request, 'inventory/fulfill_order.html', {
@@ -466,16 +486,6 @@ class FulfillOrderView(View):
             'orderitem_formset': orderitem_formset
         })
 
-    def post(self, request, pk):
-        order = get_object_or_404(Order, pk=pk)
-        orderitem_formset = OrderItemFulfillmentFormSetFactory(request.POST, instance=order)
-        if orderitem_formset.is_valid():
-            orderitem_formset.save()
-            return redirect('fulfillment_list')
-        return render(request, 'inventory/fulfill_order.html', {
-            'order': order,
-            'orderitem_formset': orderitem_formset
-        })
     
 class ReceiptView(View):
     def get(self, request, pk):

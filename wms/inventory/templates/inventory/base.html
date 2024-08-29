@@ -27,6 +27,8 @@
     <!-- Custom Scripts -->
     <script>
         $(document).ready(function() {
+            // Debug for JS error
+            /*
             // Datepicker initialization
             $('.datepicker').datepicker({
                 format: 'yyyy-mm-dd',
@@ -34,12 +36,12 @@
                 todayHighlight: true,
                 endDate: new Date()  // Ensures no future dates can be selected
             });
-
+    
             // Handle image upload button click
             $('#uploadButton').click(function() {
                 $('#id_images').click();
             });
-
+    
             // Update UI on image selection
             $('#id_images').change(function() {
                 if (this.files.length > 0) {
@@ -50,7 +52,7 @@
                     $('#uploadButton').text('Upload Images');
                 }
             });
-
+    
             // Format cost input
             $('#id_cost').on('input', function() {
                 let value = $(this).val().replace(/[^0-9.]/g, ''); // Remove non-numeric characters except period
@@ -59,6 +61,7 @@
                     $(this).val('$' + floatValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                 }
             });
+            */
         });
     </script>
 
