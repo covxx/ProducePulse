@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report, CreateOrderView, CreateOrderCustomerView, OrderCustomerListView, EditOrderCustomerView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView,  CustomerProductPriceListView, OrderCustomerProductPriceCreateView, OrderCustomerProductPriceUpdateView, OrderCustomerProductPriceDeleteView, update_profile, change_password, get_product_unit, order_history, OrderEditView, FulfillmentListView, FulfillOrderView, OrderCustomerProductPriceDeleteView, VendorListView, VendorCreateView, VendorUpdateView, VendorDeleteView, ReceiveProductView, ReceiptView, LotListView, LotDetailView
+from .views import Index, SignUpView, cDashboard, AddItem, EditItem, DeleteItem, item_detail, generate_report, CreateOrderView, CreateOrderCustomerView, OrderCustomerListView, EditOrderCustomerView, ProductListView, ProductCreateView, ProductUpdateView, ProductDeleteView,  CustomerProductPriceListView, OrderCustomerProductPriceCreateView, OrderCustomerProductPriceUpdateView, OrderCustomerProductPriceDeleteView, update_profile, change_password, get_product_unit, order_history, OrderEditView, FulfillmentListView, FulfillOrderView, OrderCustomerProductPriceDeleteView, VendorListView, VendorCreateView, VendorUpdateView, VendorDeleteView, ReceiveProductView, ReceiptView, LotListView, LotDetailView, StatusPageView
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
@@ -51,6 +51,8 @@ urlpatterns = [
     path('product/<int:product_id>/lots/', LotListView.as_view(), name='lot_list'),
     path('lots/<int:pk>/', LotDetailView.as_view(), name='lot_detail'),
     path('js/', LotDetailView.as_view(), name='lot_detail'),
+    path('status/', StatusPageView.as_view(), name='status_page'),
+
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,47 @@
+<!-- status_page.html -->
+{% extends 'inventory/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Application Performance Status</h2>
+
+    <h3>System Performance</h3>
+    <ul id="system-performance">
+        <li><strong>CPU Usage:</strong> <span id="cpu_usage">{{ cpu_usage }}</span>%</li>
+        <li><strong>Memory Usage:</strong> <span id="memory_usage">{{ memory_usage }}</span>%</li>
+        <li><strong>Total Memory:</strong> <span id="total_memory">{{ total_memory }}</span> MB</li>
+        <li><strong>Available Memory:</strong> <span id="available_memory">{{ available_memory }}</span> MB</li>
+        <li><strong>Total Disk Space:</strong> <span id="total_disk">{{ total_disk }}</span> GB</li>
+        <li><strong>Used Disk Space:</strong> <span id="used_disk">{{ used_disk }}</span> GB</li>
+    </ul>
+
+    <h3>Application Stats</h3>
+    <ul id="app-stats">
+        <li><strong>Active Users:</strong> <span id="active_users">{{ active_users }}</span></li>
+        <li><strong>Cache Hits:</strong> <span id="cache_hits">{{ cache_hits }}</span></li>
+        <li><strong>Cache Misses:</strong> <span id="cache_misses">{{ cache_misses }}</span></li>
+    </ul>
+</div>
+
+<script>
+    const statusSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/status/'
+    );
+
+    statusSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+
+        // Update system performance
+        $('#cpu_usage').text(data.cpu_usage);
+        $('#memory_usage').text(data.memory_usage);
+        $('#total_memory').text(data.total_memory);
+        $('#available_memory').text(data.available_memory);
+        $('#total_disk').text(data.total_disk);
+        $('#used_disk').text(data.used_disk);
+
+        // Update application stats
+        $('#active_users').text(data.active_users);
+        $('#cache_hits').text(data.cache_hits);
+        $('#cache_misses').text(data.cache_misses);
+    };
+</script>
+{% endblock %}

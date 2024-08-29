@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib.auth import authenticate, login, update_session_auth_hash
+from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.forms import inlineformset_factory
@@ -17,8 +18,14 @@ from django.db.models import Q
 from xhtml2pdf import pisa
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth import views as auth_views
+from django.utils.timezone import now
+import psutil
+import time
+from django.core.cache import cache
+#from .middleware import get_cache_metrics  # Import the cache metrics function
+
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -540,4 +547,61 @@ class LotDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['movements'] = OrderItemLot.objects.filter(lot=self.object).order_by('-order_item__order__created_at')
+        return context
+    
+    #Prefromance 
+def get_cache_metrics():
+    # Assuming you're using a cache backend that supports stats
+    cache_stats = cache._cache.get_stats() if hasattr(cache._cache, 'get_stats') else None
+
+    if cache_stats:
+        hits = cache_stats.get('get_hits', 0)
+        misses = cache_stats.get('get_misses', 0)
+        return {
+            'cache_hits': hits,
+            'cache_misses': misses,
+        }
+    return {
+        'cache_hits': 'N/A',
+        'cache_misses': 'N/A',
+    }
+class StatusPageView(LoginRequiredMixin, TemplateView):
+    template_name = 'inventory/status_page.html'
+    
+    def get_system_performance(self):
+        # Get CPU usage
+        cpu_usage = psutil.cpu_percent(interval=1)
+
+        # Get memory usage
+        memory_info = psutil.virtual_memory()
+        memory_usage = memory_info.percent
+        total_memory = memory_info.total // (1024 ** 2)  # Convert to MB
+        available_memory = memory_info.available // (1024 ** 2)  # Convert to MB
+
+        # Get disk usage
+        disk_usage = psutil.disk_usage('/')
+        total_disk = disk_usage.total // (1024 ** 3)  # Convert to GB
+        used_disk = disk_usage.used // (1024 ** 3)  # Convert to GB
+
+        # Get number of active users
+        active_users = User.objects.filter(last_login__gte=now() - timedelta(minutes=5)).count()
+
+        # Cache Metrics
+        cache_metrics = get_cache_metrics()
+
+        # Return all stats as a dictionary
+        return {
+            'cpu_usage': cpu_usage,
+            'memory_usage': memory_usage,
+            'total_memory': total_memory,
+            'available_memory': available_memory,
+            'total_disk': total_disk,
+            'used_disk': used_disk,
+            'active_users': active_users,
+            **cache_metrics,  # Include cache metrics
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_system_performance())
         return context

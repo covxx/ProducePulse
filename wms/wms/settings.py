@@ -77,7 +77,12 @@ DEBUG = True
 
 # Application definition
 
+ASGI_APPLICATION = 'wms.asgi.application'
+
+
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'inventory',
     'crispy_forms',
     "crispy_bootstrap5",
@@ -98,6 +103,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'inventory.middleware.RequestTimingMiddleware',
+    'inventory.middleware.RequestRateMiddleware',
 ]
 
 ROOT_URLCONF = 'wms.urls'
@@ -156,7 +163,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'EST' #Changed from UTC
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
@@ -172,7 +179,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/user_images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Allowed Hostname / addresses
-ALLOWED_HOSTS = ['192.168.1.159', 'localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['192.168.1.63', 'localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Default primary key field type
@@ -181,7 +188,7 @@ ALLOWED_HOSTS = ['192.168.1.159', 'localhost', '127.0.0.1', '0.0.0.0']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-LOGIN_REDIRECT_URL = '/dashboard'
+LOGIN_REDIRECT_URL = '/order-history'
 LOGIN_URL = '/login'
 SITE_ID = 1
 
